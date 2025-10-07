@@ -124,7 +124,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
 
   const handleUnlock = async () => {
     try {
-      const response = await fetch('YOUR_BACKEND_URL/api/create-checkout-session', {
+      const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
 
   const handleGenerateMore = async () => {
     try {
-      const response = await fetch('YOUR_BACKEND_URL/api/create-checkout-session', {
+      const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
