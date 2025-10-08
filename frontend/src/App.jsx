@@ -36,11 +36,15 @@ useEffect(() => {
   if (params.get('generate') === '5' && suggestions.length > 0) {
     setHasUnlockedOnce(true);
     generateAdditionalNames(5);
+    sessionStorage.removeItem('boopFormData');
+    sessionStorage.removeItem('boopSuggestions');
     window.history.replaceState({}, '', window.location.pathname);
   }
   
   if (params.get('generate') === '8' && suggestions.length > 0) {
     generateAdditionalNames(5);
+    sessionStorage.removeItem('boopFormData');
+    sessionStorage.removeItem('boopSuggestions');
     window.history.replaceState({}, '', window.location.pathname);
   }
 }, [suggestions]);
