@@ -176,6 +176,7 @@ const generateSuggestions = async () => {
   };
 
 const handleGenerateMore = async () => {
+  console.log('handleGenerateMore clicked!');
   try {
     const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
       method: 'POST',
