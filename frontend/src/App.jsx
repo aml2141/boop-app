@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, Baby, ArrowRight, RotateCcw, Lock, Star, Volume2, TrendingUp, RefreshCw, Download, Share2, Mail } from 'lucide-react';
 
 export default function BabyNameGenerator() {
@@ -6,6 +6,7 @@ export default function BabyNameGenerator() {
   const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
+  const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
   const [formData, setFormData] = useState({
     userName: '',
@@ -25,56 +26,29 @@ export default function BabyNameGenerator() {
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
-  const generateSuggestions = async () => {
-    setLoading(true);
-    
-    try {
-      const context = `
-
-        Location: ${formData.location || 'Not specified'}
-        Heritage: ${formData.heritage || 'Not specified'}
-        Partner's name: ${formData.partnerName || 'Not specified'}
-        Parents' names: ${formData.parentNames || 'Not specified'}
-        Sibling names: ${formData.siblingNames || 'None'}
-        Preferred style: ${formData.style || 'Any'}
-        Income range: ${formData.income || 'Not specified'}
-        Additional preferences: ${formData.additionalInfo || 'None'}
-      `.trim();
-
-      const prompt = `You are a baby name expert. Based on the following family context, suggest 8 beautiful, meaningful baby names. For each name, provide:
-1. The name itself
-2. Its meaning/origin
-3. A specific reason why it fits THIS family's context
-
-Context:
-${context}
-
-Return your response as a JSON array with this exact structure:
-[
-  {
-    "name": "Name Here",
-    "meaning": "Meaning and origin",
-    "reason": "Specific reason why this works for their family"
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://boop-app-eight.vercel.app'
+  : 'http://localhost:3000';
+const generateSuggestions = async () => {
+  // Validate that at least some fields are filled
+  const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
+  
+  if (!hasMinimumInput) {
+    alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
+    return;
   }
-]
 
-Make the suggestions diverse (different origins, styles) but all contextually relevant. Be thoughtful about cultural heritage, sibling harmony, and location. Keep explanations concise but personal.`;
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+  setLoading(true);
+  
+  try {
+      const response = await fetch(`${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': 'YOUR_API_KEY_HERE',
-          'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5-20250929',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: prompt
-          }]
+          formData: formData,
+          count: 3
         })
       });
 
@@ -83,7 +57,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
       }
 
       const data = await response.json();
-      const content = data.content[0].text;
+      const content = data.names;
       
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
@@ -100,17 +74,51 @@ Make the suggestions diverse (different origins, styles) but all contextually re
       const demoSuggestions = [
         { name: 'Luna', meaning: 'Moon - Latin origin', reason: 'Universally beautiful, works across cultures', pronunciation: 'LOO-nah', rank: 14, region: 'National' },
         { name: 'Oliver', meaning: 'Olive tree - Latin origin', reason: 'Classic choice, consistently popular', pronunciation: 'AH-liv-er', rank: 3, region: 'National' },
-        { name: 'Aria', meaning: 'Air, melody - Italian origin', reason: 'Modern, musical, and elegant', pronunciation: 'AH-ree-ah', rank: 22, region: 'National' },
-        { name: 'Theodore', meaning: 'Gift of God - Greek origin', reason: 'Vintage revival with sophisticated appeal', pronunciation: 'THEE-uh-dor', rank: 8, region: 'National' },
-        { name: 'Nadia', meaning: 'Hope - Slavic origin', reason: 'Beautiful sound with positive meaning', pronunciation: 'NAH-dee-ah', rank: 356, region: 'Northeast' },
-        { name: 'Leo', meaning: 'Lion - Latin origin', reason: 'Strong, short, and timeless', pronunciation: 'LEE-oh', rank: 31, region: 'National' },
-        { name: 'Amelia', meaning: 'Industrious - German origin', reason: 'Classic with modern popularity', pronunciation: 'ah-MEEL-yah', rank: 6, region: 'National' },
-        { name: 'Felix', meaning: 'Happy, fortunate - Latin origin', reason: 'Cheerful meaning with vintage charm', pronunciation: 'FEE-liks', rank: 189, region: 'West Coast' }
+        { name: 'Aria', meaning: 'Air, melody - Italian origin', reason: 'Modern, musical, and elegant', pronunciation: 'AH-ree-ah', rank: 22, region: 'National' }
       ];
       
       setSuggestions(demoSuggestions);
       setStep('results');
       setHasGeneratedOnce(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateAdditionalNames = async (count = 5) => {
+    setLoading(true);
+    try {
+      const existingNames = suggestions.map(s => s.name).join(', ');
+      
+      const response = await fetch(`${API_URL}/api/generate-names`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formData: formData,
+          existingNames: existingNames,
+          count: count
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('API call failed');
+      }
+
+      const data = await response.json();
+      const content = data.names;
+      
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const newNames = JSON.parse(jsonMatch[0]);
+        setSuggestions([...suggestions, ...newNames]);
+      } else {
+        throw new Error('Could not parse AI response');
+      }
+    } catch (error) {
+      console.error('Error generating additional names:', error);
+      alert('Error generating more names. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -122,6 +130,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
     setLoading(false);
     setIsPremium(false);
     setHasGeneratedOnce(false);
+    setHasUnlockedOnce(false);
     setShowPopularity(false);
   };
 
@@ -151,29 +160,13 @@ Make the suggestions diverse (different origins, styles) but all contextually re
     }
   };
 
-  const handleGenerateMore = async () => {
-    try {
-      const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
-          successUrl: window.location.href + '?generate=true',
-          cancelUrl: window.location.href,
-        }),
-      });
+  const handleGenerateMore = () => {
+    setHasUnlockedOnce(true);
+    generateAdditionalNames(5);
+  };
 
-      const { sessionId } = await response.json();
-      const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
-      await stripe.redirectToCheckout({ sessionId });
-      
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment processing would happen here via Stripe!\n\nGenerating new names...');
-      generateSuggestions();
-    }
+  const handleGenerateEightMore = () => {
+    generateAdditionalNames(5);
   };
 
   const playPronunciation = (name, pronunciation) => {
@@ -187,8 +180,14 @@ Make the suggestions diverse (different origins, styles) but all contextually re
   };
 
   const downloadAsPDF = () => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+if (isMobile) {
+  window.print();
+  return;
+}
     const printWindow = window.open('', '_blank');
-    const namesToShow = isPremium ? [...freeNames, ...premiumNames] : freeNames;
+    const namesToShow = suggestions;
     
     const html = `
       <!DOCTYPE html>
@@ -275,7 +274,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
               <div class="name">${n.name}</div>
               <div class="pronunciation">🔊 ${n.pronunciation}</div>
               <div class="meaning">"${n.meaning}"</div>
-              <div class="reason"><strong>Why this works:</strong> ${n.reason}</div>
+              <div class="reason"><strong>Why this works:</strong> ${n.reason || n.reasoning || 'Personalized for your family'}</div>
               ${n.rank ? `<div class="rank">📊 National Rank: #${n.rank}</div>` : ''}
             </div>
           `).join('')}
@@ -299,8 +298,8 @@ Make the suggestions diverse (different origins, styles) but all contextually re
   };
 
   const shareViaEmail = () => {
-    const namesToShow = isPremium ? [...freeNames, ...premiumNames] : freeNames;
-    const nameList = namesToShow.map(n => `${n.name} (${n.pronunciation})\n"${n.meaning}"\n${n.reason}`).join('\n\n');
+    const namesToShow = suggestions;
+    const nameList = namesToShow.map(n => `${n.name} (${n.pronunciation})\n"${n.meaning}"\n${n.reason || n.reasoning}`).join('\n\n');
     
     const subject = encodeURIComponent('Boop Name Suggestions');
     const body = encodeURIComponent(`Here are our baby name ideas:\n\n${nameList}\n\nGenerated by Boop`);
@@ -308,24 +307,39 @@ Make the suggestions diverse (different origins, styles) but all contextually re
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
-  const shareViaText = () => {
-    const namesToShow = isPremium ? [...freeNames, ...premiumNames] : freeNames;
-    const nameList = namesToShow.map(n => n.name).join(', ');
-    
-    const text = encodeURIComponent(`Check out these baby name ideas: ${nameList}`);
-    
-    if (navigator.share) {
-      navigator.share({
-        title: 'Boop Name Suggestions',
-        text: `Check out these baby name ideas: ${nameList}`,
-      }).catch(err => console.log('Share failed', err));
-    } else {
-      window.location.href = `sms:?body=${text}`;
-    }
-  };
-
+const shareViaText = () => {
+  const namesToShow = suggestions;
+  const nameList = namesToShow.map(n => 
+    `${n.name} (${n.pronunciation})\n"${n.meaning}"\n${n.reason || n.reasoning || 'Perfect for your family'}`
+  ).join('\n\n');
+  
+  const text = `Check out these personalized baby name ideas:\n\n${nameList}\n\nGenerated by Boop`;
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'Boop Name Suggestions',
+      text: text,
+    }).catch(err => console.log('Share failed', err));
+  } else {
+    const encoded = encodeURIComponent(text);
+    window.location.href = `sms:?body=${encoded}`;
+  }
+};
+const shareIndividualName = (name) => {
+  const text = `Check out this baby name idea:\n\n${name.name} (${name.pronunciation})\n"${name.meaning}"\n\n${name.reason || name.reasoning || 'Perfect for your family'}\n\nGenerated by Boop`;
+  
+  if (navigator.share) {
+    navigator.share({
+      title: `Baby Name: ${name.name}`,
+      text: text,
+    }).catch(err => console.log('Share failed', err));
+  } else {
+    const encoded = encodeURIComponent(text);
+    window.location.href = `sms:?body=${encoded}`;
+  }
+};
   const freeNames = suggestions.slice(0, 3);
-  const premiumNames = suggestions.slice(3, 8);
+  const premiumNames = suggestions.slice(3);
 
   if (loading) {
     return (
@@ -371,7 +385,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
                 className="mt-4 px-6 py-2 bg-green-100 text-green-700 rounded-full shadow-md hover:shadow-lg transition-shadow flex items-center gap-2 font-medium"
               >
                 <Download size={18} />
-                Save as PDF
+{/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Save as Image' : 'Save as PDF'}
               </button>
 
               <button
@@ -391,70 +405,31 @@ Make the suggestions diverse (different origins, styles) but all contextually re
               </button>
             </div>
           </div>
-
-          {showPopularity && (
-            <div className="mt-8 mb-8 bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <TrendingUp className="text-blue-600" size={28} />
-                Popularity Rankings (2024)
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {freeNames.map((name, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                    <div>
-                      <p className="font-bold text-gray-800 text-lg">{name.name}</p>
-                      <p className="text-sm text-gray-600">{name.region || 'National'}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-3xl font-bold text-blue-600">#{name.rank || 'N/A'}</p>
-                      <p className="text-xs text-gray-500">National Rank</p>
-                    </div>
-                  </div>
-                ))}
-                
-                {!isPremium && premiumNames.length > 0 && (
-                  <>
-                    {premiumNames.slice(0, 2).map((name, i) => (
-                      <div key={i} className="relative flex items-center justify-between p-4 bg-gray-100 rounded-lg overflow-hidden">
-                        <div className="blur-sm">
-                          <p className="font-bold text-gray-800 text-lg">{name.name}</p>
-                          <p className="text-sm text-gray-600">Region Data</p>
-                        </div>
-                        <div className="text-right blur-sm">
-                          <p className="text-3xl font-bold text-gray-400">#123</p>
-                          <p className="text-xs text-gray-500">Rank</p>
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-                          <Lock className="text-white" size={32} />
-                        </div>
-                      </div>
-                    ))}
-                    <div className="md:col-span-2 text-center p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-white">
-                      <p className="font-semibold mb-2">Unlock popularity data for all 8 names</p>
-                      <p className="text-sm text-blue-100">Upgrade to premium to see complete ranking trends</p>
-                    </div>
-                  </>
-                )}
-                
-                {isPremium && premiumNames.map((name, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border-2 border-blue-200">
-                    <div>
-                      <p className="font-bold text-gray-800 text-lg">{name.name}</p>
-                      <p className="text-sm text-gray-600">{name.region || 'National'}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-3xl font-bold text-blue-600">#{name.rank || 'N/A'}</p>
-                      <p className="text-xs text-gray-500">National Rank</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-gray-500 mt-4 text-center">
-                Rankings based on Social Security Administration data and regional trends
-              </p>
-            </div>
-          )}
-
+{showPopularity && (
+  <div className="mt-8 mb-8 bg-white rounded-2xl shadow-lg p-6">
+    <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <TrendingUp className="text-blue-600" size={28} />
+      Popularity Rankings (2024)
+    </h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {suggestions.map((name, i) => (
+        <div key={i} className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+          <div>
+            <p className="font-bold text-gray-800 text-lg">{name.name}</p>
+            <p className="text-sm text-gray-600">{name.region || 'National'}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-3xl font-bold text-blue-600">#{name.rank || 'N/A'}</p>
+            <p className="text-xs text-gray-500">National Rank</p>
+          </div>
+        </div>
+      ))}
+    </div>
+    <p className="text-sm text-gray-500 mt-4 text-center">
+      Estimated popularity rankings based on current naming trends
+    </p>
+  </div>
+)}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {freeNames.map((suggestion, i) => (
               <div 
@@ -472,13 +447,22 @@ Make the suggestions diverse (different origins, styles) but all contextually re
                       {suggestion.pronunciation}
                     </button>
                   </div>
-                  <Sparkles className="text-blue-500 flex-shrink-0" size={24} />
+                  <button
+  onClick={(e) => {
+    e.stopPropagation();
+    shareIndividualName(suggestion);
+  }}
+  className="text-blue-500 hover:text-blue-600 transition-colors"
+  title="Share this name"
+>
+  <Star size={24} />
+</button>
                 </div>
                 <p className="text-gray-600 italic mb-3 text-lg">"{suggestion.meaning}"</p>
                 <div className="bg-blue-50 rounded-lg p-3">
                   <p className="text-sm font-medium text-blue-800">
                     <span className="font-semibold">Why this works: </span>
-                    {suggestion.reason}
+                    {suggestion.reason || suggestion.reasoning || 'Personalized for your family'}
                   </p>
                 </div>
               </div>
@@ -487,97 +471,73 @@ Make the suggestions diverse (different origins, styles) but all contextually re
 
           {premiumNames.length > 0 && (
             <div className="mt-8">
-              {!isPremium ? (
-                <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-                  <div className="relative">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Lock size={32} />
-                      <h3 className="text-3xl font-bold">Unlock 5 More Premium Names</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Star className="text-yellow-500 fill-yellow-500" size={24} />
+                <h2 className="text-2xl font-bold text-gray-800">Additional Suggestions</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {premiumNames.map((suggestion, i) => (
+                  <div 
+                    key={i}
+                    className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-blue-200"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="text-3xl font-bold text-gray-800">{suggestion.name}</h3>
+                        <button
+                          onClick={() => playPronunciation(suggestion.name, suggestion.pronunciation)}
+                          className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mt-1 text-sm font-medium"
+                        >
+                          <Volume2 size={16} />
+                          {suggestion.pronunciation}
+                        </button>
+                      </div>
+                        
                     </div>
-                    <p className="text-blue-50 mb-6 text-lg">
-                      Get 5 additional contextually personalized name suggestions, each carefully selected for your unique family story.
-                    </p>
-                    <div className="bg-white bg-opacity-20 rounded-lg p-4 mb-6 backdrop-blur-sm">
-                      <div className="flex items-start gap-3 mb-2">
-                        <Star className="text-yellow-300 flex-shrink-0 mt-1" size={20} />
-                        <p className="text-sm">5 additional personalized names</p>
-                      </div>
-                      <div className="flex items-start gap-3 mb-2">
-                        <Star className="text-yellow-300 flex-shrink-0 mt-1" size={20} />
-                        <p className="text-sm">Complete popularity rankings for all names</p>
-                      </div>
-                      <div className="flex items-start gap-3 mb-2">
-                        <Star className="text-yellow-300 flex-shrink-0 mt-1" size={20} />
-                        <p className="text-sm">More diverse cultural perspectives</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Star className="text-yellow-300 flex-shrink-0 mt-1" size={20} />
-                        <p className="text-sm">Deep cultural and family context analysis</p>
-                      </div>
+                    <p className="text-gray-600 italic mb-3 text-lg">"{suggestion.meaning}"</p>
+                    <div className="bg-white bg-opacity-70 rounded-lg p-3">
+                      <p className="text-sm font-medium text-blue-800">
+                        <span className="font-semibold">Why this works: </span>
+                        {suggestion.reason || suggestion.reasoning || 'Personalized for your family'}
+                      </p>
                     </div>
-                    <button
-                      onClick={handleUnlock}
-                      className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-xl shadow-lg w-full md:w-auto"
-                    >
-                      Unlock for $0.99
-                    </button>
-                    <p className="text-blue-100 text-sm mt-3">One-time payment • Instant access</p>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Star className="text-yellow-500 fill-yellow-500" size={24} />
-                    <h2 className="text-2xl font-bold text-gray-800">Premium Suggestions</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {premiumNames.map((suggestion, i) => (
-                      <div 
-                        key={i}
-                        className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-blue-200"
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h3 className="text-3xl font-bold text-gray-800">{suggestion.name}</h3>
-                            <button
-                              onClick={() => playPronunciation(suggestion.name, suggestion.pronunciation)}
-                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mt-1 text-sm font-medium"
-                            >
-                              <Volume2 size={16} />
-                              {suggestion.pronunciation}
-                            </button>
-                          </div>
-                          <Star className="text-yellow-500 fill-yellow-500 flex-shrink-0" size={24} />
-                        </div>
-                        <p className="text-gray-600 italic mb-3 text-lg">"{suggestion.meaning}"</p>
-                        <div className="bg-white bg-opacity-70 rounded-lg p-3">
-                          <p className="text-sm font-medium text-blue-800">
-                            <span className="font-semibold">Why this works: </span>
-                            {suggestion.reason}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
           )}
 
-          {hasGeneratedOnce && (
+          {hasGeneratedOnce && !hasUnlockedOnce && suggestions.length === 3 && (
             <div className="mt-8">
               <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">Want More Options?</h3>
                 <p className="text-gray-600 mb-4">
-                  Generate a fresh set of 8 personalized names using your same context
+                  Generate 5 more personalized names using your same context
                 </p>
                 <button
                   onClick={handleGenerateMore}
                   className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 mx-auto"
                 >
                   <RefreshCw size={20} />
-                  Generate More Names - $0.99
+                  Unlock 5 More Names - $0.99
+                </button>
+              </div>
+            </div>
+          )}
+
+          {hasGeneratedOnce && hasUnlockedOnce && (
+            <div className="mt-8">
+              <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Want Even More Options?</h3>
+                <p className="text-gray-600 mb-4">
+                  Generate a fresh set of 5 personalized names using your same context
+                </p>
+                <button
+                  onClick={handleGenerateEightMore}
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 mx-auto"
+                >
+                  <RefreshCw size={20} />
+                  Generate 5 More Names - $0.99
                 </button>
               </div>
             </div>
@@ -586,6 +546,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
           <div className="mt-8 bg-white rounded-2xl shadow-lg p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-3">Your Context</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
+              {formData.userName && <p><span className="font-semibold">Your Name:</span> {formData.userName}</p>}
               {formData.location && <p><span className="font-semibold">Location:</span> {formData.location}</p>}
               {formData.heritage && <p><span className="font-semibold">Heritage:</span> {formData.heritage}</p>}
               {formData.siblingNames && <p><span className="font-semibold">Siblings:</span> {formData.siblingNames}</p>}
@@ -600,18 +561,18 @@ Make the suggestions diverse (different origins, styles) but all contextually re
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
       <div className="max-w-3xl mx-auto">
- <div className="text-center mb-8 pt-8">
-  <div className="flex items-center justify-center gap-3 mb-2">
-    <Baby className="text-blue-600" size={40} />
-    <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
-  </div>
-  <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
-  <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
-</div>
+        <div className="text-center mb-8 pt-8">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Baby className="text-blue-600" size={40} />
+            <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
+          <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
+        </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="space-y-6">
-<div>
+            <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 What's your name?
               </label>
@@ -623,6 +584,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
                 className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               />
             </div>
+            
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Where do you live?
@@ -705,31 +667,31 @@ Make the suggestions diverse (different origins, styles) but all contextually re
               </select>
             </div>
 
-          <div>
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    What's your favorite color? (optional)
-  </label>
-  <input
-    type="text"
-    value={formData.favoriteColor}
-    onChange={(e) => updateField('favoriteColor', e.target.value)}
-    placeholder="e.g., Blue, Purple..."
-    className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-  />
-</div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your favorite color? (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.favoriteColor}
+                onChange={(e) => updateField('favoriteColor', e.target.value)}
+                placeholder="e.g., Blue, Purple..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
 
-<div>
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    What's your favorite food? (optional)
-  </label>
-  <input
-    type="text"
-    value={formData.favoriteFood}
-    onChange={(e) => updateField('favoriteFood', e.target.value)}
-    placeholder="e.g., Pizza, Sushi..."
-    className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-  />
-</div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your favorite food? (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.favoriteFood}
+                onChange={(e) => updateField('favoriteFood', e.target.value)}
+                placeholder="e.g., Pizza, Sushi..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
