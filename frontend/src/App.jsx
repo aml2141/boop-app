@@ -329,7 +329,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Crafting Your Perfect Names...</h2>
@@ -341,7 +341,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
 
   if (step === 'results') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
         <div className="max-w-3xl mx-auto" style={{width: '100%', maxWidth: '48rem', marginLeft: 'auto', marginRight: 'auto'}}>
           <div className="text-center mb-8 pt-8">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -598,7 +598,7 @@ Make the suggestions diverse (different origins, styles) but all contextually re
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-cyan-500 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
       <div className="max-w-3xl mx-auto">
  <div className="text-center mb-8 pt-8">
   <div className="flex items-center justify-center gap-3 mb-2">
@@ -608,6 +608,9 @@ Make the suggestions diverse (different origins, styles) but all contextually re
   <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
   <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
 </div>
+
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="space-y-6">
 <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 What's your name?
@@ -620,8 +623,6 @@ Make the suggestions diverse (different origins, styles) but all contextually re
                 className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               />
             </div>
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Where do you live?
