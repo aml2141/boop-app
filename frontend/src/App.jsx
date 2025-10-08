@@ -201,7 +201,7 @@ const handleGenerateMore = async () => {
   }
 };
 
-const handleGenerateMore = async () => {
+const handleGenerateEightMore = async () => {
   try {
     const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
       method: 'POST',
