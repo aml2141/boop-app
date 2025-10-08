@@ -46,20 +46,25 @@ useEffect(() => {
 }, [suggestions]);
 // Restore state from sessionStorage on page load
 useEffect(() => {
-  const savedFormData = sessionStorage.getItem('boopFormData');
-  const savedSuggestions = sessionStorage.getItem('boopSuggestions');
+  const params = new URLSearchParams(window.location.search);
   
-  if (savedSuggestions) {
-    const parsed = JSON.parse(savedSuggestions);
-    if (parsed.length > 0) {
-      setSuggestions(parsed);
-      setStep('results');
-      setHasGeneratedOnce(true);
-      if (parsed.length > 3) {
-        setHasUnlockedOnce(true);
-      }
-    }
+  if (params.get('generate') === '5' && suggestions.length > 0) {
+    setHasUnlockedOnce(true);
+    generateAdditionalNames(5);
+    // Clear sessionStorage after generating
+    sessionStorage.removeItem('boopFormData');
+    sessionStorage.removeItem('boopSuggestions');
+    window.history.replaceState({}, '', window.location.pathname);
   }
+  
+  if (params.get('generate') === '8' && suggestions.length > 0) {
+    generateAdditionalNames(5);
+    // Clear sessionStorage after generating
+    sessionStorage.removeItem('boopFormData');
+    sessionStorage.removeItem('boopSuggestions');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}, [suggestions]);
   
   if (savedFormData) {
     setFormData(JSON.parse(savedFormData));
@@ -160,15 +165,18 @@ const generateSuggestions = async () => {
     }
   };
 
-  const reset = () => {
-    setStep('form');
-    setSuggestions([]);
-    setLoading(false);
-    setIsPremium(false);
-    setHasGeneratedOnce(false);
-    setHasUnlockedOnce(false);
-    setShowPopularity(false);
-  };
+const reset = () => {
+  setStep('form');
+  setSuggestions([]);
+  setLoading(false);
+  setIsPremium(false);
+  setHasGeneratedOnce(false);
+  setHasUnlockedOnce(false);
+  setShowPopularity(false);
+  // Clear sessionStorage
+  sessionStorage.removeItem('boopFormData');
+  sessionStorage.removeItem('boopSuggestions');
+};
 
   const handleUnlock = async () => {
     try {
