@@ -49,19 +49,45 @@ app.post('/api/generate-names', async (req, res) => {
 console.log('Existing names to avoid:', existingNames || 'none');
 
     // Build the prompt from form data
-    let prompt = `You are a thoughtful baby name consultant. Based on the following information, suggest ${nameCount} beautiful, meaningful baby names.
+let prompt = `You are a thoughtful baby name consultant with deep knowledge of names from diverse cultures and traditions. Generate ${nameCount} PRACTICAL, REAL baby names that parents would actually use.
 
-Parent's name: ${formData.userName || 'Not provided'}
-Location: ${formData.location || 'Not provided'}
-Parent names: ${formData.parentNames || 'Not provided'}
-Cultural background: ${formData.culturalBackground || 'Not provided'}
-Baby's sex: ${formData.babySex || 'Not provided'}
-Name style preferences: ${formData.nameStyle || 'Not provided'}
-Favorite color: ${formData.favoriteColor || 'Not provided'}
-Favorite food: ${formData.favoriteFood || 'Not provided'}
-Sibling names: ${formData.siblingNames || 'Not provided'}
-Names to avoid: ${formData.avoidNames || 'Not provided'}
-Additional context: ${formData.additionalContext || 'Not provided'}`;
+IMPORTANT: Use ALL the context provided below to make deeply personalized suggestions. Each name should feel chosen specifically for THIS family.
+
+FAMILY CONTEXT:
+- Parent's name: ${formData.userName || 'Not provided'}
+- Location: ${formData.location || 'Not provided'}
+- Cultural heritage: ${formData.heritage || 'Not provided'}
+- Partner's name: ${formData.partnerName || 'Not provided'}
+- Parents' names: ${formData.parentNames || 'Not provided'}
+- Sibling names: ${formData.siblingNames || 'Not provided'}
+- Preferred style: ${formData.style || 'Not provided'}
+- Favorite color: ${formData.favoriteColor || 'Not provided'}
+- Favorite food: ${formData.favoriteFood || 'Not provided'}
+- Additional preferences: ${formData.additionalInfo || 'Not provided'}
+
+REQUIREMENTS:
+1. Suggest ONLY established, real names that parents would actually use (not invented names)
+2. Names should honor their cultural heritage when provided
+3. Names should complement sibling names when provided
+4. Consider their location and community
+5. Each name's reasoning must reference SPECIFIC details from their context (mention their heritage, location, sibling names, parent names, or other details they provided)
+6. Be thoughtful about how names sound with the parent's surname if mentioned
+7. Ensure names are appropriate for their stated style preference
+
+For each name, provide a realistic estimated popularity ranking based on current naming trends:
+- Popular classic names (like Emma, Noah): ranks 1-100
+- Moderately popular names: ranks 100-500
+- Unique/uncommon names: ranks 500-1000+`;
+
+    // Add existing names to avoid if provided
+    if (existingNames) {
+      prompt += `\n\n🚨 CRITICAL REQUIREMENT 🚨
+You have already suggested these names: ${existingNames}
+
+You MUST NOT suggest ANY of these names again. Every single one of the ${nameCount} names you generate MUST be completely different and unique from this list. Double-check your response before providing it to ensure no duplicates.`;
+    }
+
+    prompt += `\n\nFormat as JSON array with objects containing: name, pronunciation, meaning, origin, reason (must reference specific family context), rank (estimated national rank as a number)`;
 
 // Add existing names to avoid if provided
 if (existingNames) {
@@ -96,6 +122,32 @@ Format as JSON array with objects containing: name, pronunciation, meaning, orig
     res.json({ names: responseText });
   } catch (error) {
     console.error('Error generating names:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+// Stripe checkout endpoint
+app.post('/api/create-checkout-session', async (req, res) => {
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  
+  try {
+    const { priceId, successUrl, cancelUrl } = req.body;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+    });
+
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
     res.status(500).json({ error: error.message });
   }
 });
