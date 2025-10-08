@@ -29,6 +29,21 @@ export default function BabyNameGenerator() {
 const API_URL = process.env.NODE_ENV === 'production' 
   ? 'https://boop-app-eight.vercel.app'
   : 'http://localhost:3000';
+  // Handle return from Stripe payment
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  
+  if (params.get('generate') === '5' && suggestions.length > 0) {
+    setHasUnlockedOnce(true);
+    generateAdditionalNames(5);
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+  
+  if (params.get('generate') === '8' && suggestions.length > 0) {
+    generateAdditionalNames(5);
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}, [suggestions]);
 const generateSuggestions = async () => {
   // Validate that at least some fields are filled
   const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
@@ -160,14 +175,57 @@ const generateSuggestions = async () => {
     }
   };
 
-  const handleGenerateMore = () => {
+const handleGenerateMore = async () => {
+  try {
+    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+        successUrl: window.location.href + '?generate=5',
+        cancelUrl: window.location.href,
+      }),
+    });
+
+    const { sessionId } = await response.json();
+    const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+    await stripe.redirectToCheckout({ sessionId });
+    
+  } catch (error) {
+    console.error('Payment error:', error);
+    // Fallback for demo/testing
     setHasUnlockedOnce(true);
     generateAdditionalNames(5);
-  };
+  }
+};
 
-  const handleGenerateEightMore = () => {
+const handleGenerateMore = async () => {
+  try {
+    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+        successUrl: window.location.href + '?generate=5',
+        cancelUrl: window.location.href,
+      }),
+    });
+
+    const { sessionId } = await response.json();
+    const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+    await stripe.redirectToCheckout({ sessionId });
+    
+  } catch (error) {
+    console.error('Payment error:', error);
+    // Fallback for demo/testing
+    setHasUnlockedOnce(true);
     generateAdditionalNames(5);
-  };
+  }
+};
 
   const playPronunciation = (name, pronunciation) => {
     if ('speechSynthesis' in window) {
