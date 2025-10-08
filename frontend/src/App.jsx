@@ -48,40 +48,30 @@ useEffect(() => {
     window.history.replaceState({}, '', window.location.pathname);
   }
 }, [suggestions]);
+
 // Restore state from sessionStorage on page load
 useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
+  const savedFormData = sessionStorage.getItem('boopFormData');
+  const savedSuggestions = sessionStorage.getItem('boopSuggestions');
   
-  if (params.get('generate') === '5' && suggestions.length > 0) {
-    setHasUnlockedOnce(true);
-    generateAdditionalNames(5);
-    // Clear sessionStorage after generating
-    sessionStorage.removeItem('boopFormData');
-    sessionStorage.removeItem('boopSuggestions');
-    window.history.replaceState({}, '', window.location.pathname);
+  if (savedSuggestions) {
+    const parsed = JSON.parse(savedSuggestions);
+    if (parsed.length > 0) {
+      setSuggestions(parsed);
+      setStep('results');
+      setHasGeneratedOnce(true);
+      if (parsed.length > 3) {
+        setHasUnlockedOnce(true);
+      }
+    }
   }
-  
-  if (params.get('generate') === '8' && suggestions.length > 0) {
-    generateAdditionalNames(5);
-    // Clear sessionStorage after generating
-    sessionStorage.removeItem('boopFormData');
-    sessionStorage.removeItem('boopSuggestions');
-    window.history.replaceState({}, '', window.location.pathname);
-  }
-}, [suggestions]);
   
   if (savedFormData) {
     setFormData(JSON.parse(savedFormData));
   }
 }, []);
+
 const generateSuggestions = async () => {
-  // Validate that at least some fields are filled
-  const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
-  
-  if (!hasMinimumInput) {
-    alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
-    return;
-  }
 
   setLoading(true);
   
