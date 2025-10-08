@@ -44,6 +44,27 @@ useEffect(() => {
     window.history.replaceState({}, '', window.location.pathname);
   }
 }, [suggestions]);
+// Restore state from sessionStorage on page load
+useEffect(() => {
+  const savedFormData = sessionStorage.getItem('boopFormData');
+  const savedSuggestions = sessionStorage.getItem('boopSuggestions');
+  
+  if (savedSuggestions) {
+    const parsed = JSON.parse(savedSuggestions);
+    if (parsed.length > 0) {
+      setSuggestions(parsed);
+      setStep('results');
+      setHasGeneratedOnce(true);
+      if (parsed.length > 3) {
+        setHasUnlockedOnce(true);
+      }
+    }
+  }
+  
+  if (savedFormData) {
+    setFormData(JSON.parse(savedFormData));
+  }
+}, []);
 const generateSuggestions = async () => {
   // Validate that at least some fields are filled
   const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
@@ -177,6 +198,9 @@ const generateSuggestions = async () => {
 
 const handleGenerateMore = async () => {
   console.log('handleGenerateMore clicked!');
+  // Save state before redirecting to Stripe
+  sessionStorage.setItem('boopFormData', JSON.stringify(formData));
+  sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   try {
     const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
       method: 'POST',
@@ -203,6 +227,9 @@ const handleGenerateMore = async () => {
 };
 
 const handleGenerateEightMore = async () => {
+  // Save state before redirecting to Stripe
+  sessionStorage.setItem('boopFormData', JSON.stringify(formData));
+  sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   try {
     const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
       method: 'POST',
