@@ -30,8 +30,6 @@ export default function BabyNameGenerator() {
   const [step, setStep] = useState('form');
   const [loading, setLoading] = useState(false);
   // ... rest of code
-  const [step, setStep] = useState('form');
-  const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
@@ -125,9 +123,6 @@ const formSteps = [
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-  const updateField = (field, value) => {
-  setFormData(prev => ({ ...prev, [field]: value }));
-};
 
 const nextFormStep = () => {
   const currentQuestion = formSteps[currentFormStep];
@@ -152,7 +147,6 @@ const prevFormStep = () => {
 const isLastStep = currentFormStep === formSteps.length - 1;
 const canSubmit = formData.userName && formData.location && formData.style;
 
-const API_URL = process.env.NODE_ENV === 'production'
 const API_URL = process.env.NODE_ENV === 'production' 
   ? 'https://boop-app-eight.vercel.app'
   : 'http://localhost:3000';
@@ -843,7 +837,7 @@ const shareIndividualName = (name) => {
                 placeholder={formSteps[currentFormStep].placeholder}
                 rows={6}
                 className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors resize-none"
-                autoFocus
+autoFocus
               />
             )}
           </div>
@@ -851,5 +845,35 @@ const shareIndividualName = (name) => {
 
         {/* Navigation Buttons */}
         <div className="flex gap-4 mt-8">
-          {currentFormS
-}
+          {currentFormStep > 0 && (
+            <button
+              onClick={prevFormStep}
+              className="flex-1 bg-gray-200 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
+            >
+              <ArrowRight size={20} className="rotate-180" />
+              Back
+            </button>
+          )}
+          
+          {!isLastStep ? (
+            <button
+              onClick={nextFormStep}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              Next
+              <ArrowRight size={20} />
+            </button>
+          ) : (
+            <button
+              onClick={generateSuggestions}
+              disabled={loading || !canSubmit}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Generating...' : 'Generate My Names'}
+              <Sparkles size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <p className="text-center text-gray
