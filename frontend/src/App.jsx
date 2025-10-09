@@ -876,4 +876,10 @@ autoFocus
         </div>
       </div>
 
-      <p className="text-center text-gray
+      <p className="text-center text-gray-500 text-sm mt-6">
+        We use your context to suggest culturally relevant, meaningful names
+      </p>
+    </div>
+  </div>
+);
+}
