@@ -1,40 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Baby, Sparkles, ArrowRight, ArrowLeft, Share2, Download, Star } from 'lucide-react';
-import Select from 'react-select';
-const styles = `
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-out;
-  }
-`;
-export default function BabyNameGenerator() {
-  // Inject animation styles
-  if (typeof document !== 'undefined') {
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    if (!document.head.querySelector('[data-boop-styles]')) {
-      styleSheet.setAttribute('data-boop-styles', 'true');
-      document.head.appendChild(styleSheet);
-    }
-  }
+import { useState, useEffect } from 'react';
+import { Sparkles, Baby, ArrowRight, RotateCcw, Lock, Star, Volume2, TrendingUp, RefreshCw, Download, Share2, Mail } from 'lucide-react';
 
+export default function BabyNameGenerator() {
   const [step, setStep] = useState('form');
   const [loading, setLoading] = useState(false);
-  // ... rest of code
   const [isPremium, setIsPremium] = useState(false);
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
-  const [currentFormStep, setCurrentFormStep] = useState(0);
   const [formData, setFormData] = useState({
     userName: '',
     location: '',
@@ -49,114 +22,10 @@ export default function BabyNameGenerator() {
     additionalInfo: ''
   });
   const [suggestions, setSuggestions] = useState([]);
-const formSteps = [
-  {
-    id: 'userName',
-    label: "What's your name?",
-    placeholder: 'e.g., Sarah',
-    type: 'text',
-    required: true
-  },
-  {
-    id: 'location',
-    label: 'Where do you live?',
-    placeholder: 'e.g., NYC, San Francisco, Austin...',
-    type: 'searchable-select', // <-- Change from 'text' to 'searchable-select',
-    required: true
-  },
-  {
-    id: 'heritage',
-    label: "What's your heritage or cultural background?",
-    placeholder: 'e.g., Eastern European, Irish, Italian, Mexican...',
-    type: 'text',
-    required: false
-  },
-  {
-    id: 'partnerName',
-    label: "Your partner's name (optional)",
-    placeholder: 'e.g., Alex',
-    type: 'text',
-    required: false
-  },
-  {
-    id: 'parentNames',
-    label: "Your parent's names (optional)",
-    placeholder: 'e.g., Anna and Boris',
-    type: 'text',
-    required: false
-  },
-  {
-    id: 'siblingNames',
-    label: 'Do you have other children? If so, what are their names?',
-    placeholder: 'e.g., Emma, Liam',
-    type: 'text',
-    required: false
-  },
-  {
-    id: 'style',
-    label: 'What style of name do you prefer?',
-    type: 'select',
-    required: true,
-    options: [
-      { value: '', label: 'Choose a style...' },
-      { value: 'classic', label: 'Classic & Timeless' },
-      { value: 'modern', label: 'Modern & Trendy' },
-      { value: 'unique', label: 'Unique & Uncommon' },
-      { value: 'traditional', label: 'Traditional & Cultural' }
-    ]
-  },
-  {
-    id: 'favoriteColor',
-    label: "What's your favorite color? (optional)",
-    placeholder: 'e.g., Blue, Purple...',
-    type: 'text',
-    required: false
-  },
-  {
-    id: 'additionalInfo',
-    label: 'Any other preferences or context?',
-    placeholder: 'Tell us anything else that matters to you...',
-    type: 'textarea',
-    required: false
-  }
-]; // <-- This closes formSteps
 
-const majorCities = [
-  // North America
-  { value: 'New York City, NY', label: 'New York City, NY', country: 'USA' },
-  { value: 'Los Angeles, CA', label: 'Los Angeles, CA', country: 'USA' },
-  // ... (paste the full list I gave you)
-];
-
-const updateField = (field, value) => {
-  // ...
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
-const nextFormStep = () => {
-  const currentQuestion = formSteps[currentFormStep];
-  
-  // Validate required fields
-  if (currentQuestion.required && !formData[currentQuestion.id]) {
-    alert(`Please answer: ${currentQuestion.label}`);
-    return;
-  }
-  
-  if (currentFormStep < formSteps.length - 1) {
-    setCurrentFormStep(currentFormStep + 1);
-  }
-};
-
-const prevFormStep = () => {
-  if (currentFormStep > 0) {
-    setCurrentFormStep(currentFormStep - 1);
-  }
-};
-
-const isLastStep = currentFormStep === formSteps.length - 1;
-const canSubmit = formData.userName && formData.location && formData.style;
-
 const API_URL = process.env.NODE_ENV === 'production' 
   ? 'https://boop-app-eight.vercel.app'
   : 'http://localhost:3000';
@@ -778,138 +647,168 @@ const shareIndividualName = (name) => {
   }
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-8 pt-8">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <Baby className="text-blue-600" size={40} />
-          <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8 pt-8">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Baby className="text-blue-600" size={40} />
+            <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
+          <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
         </div>
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
-        <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
-      </div>
 
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-gray-700">
-            Question {currentFormStep + 1} of {formSteps.length}
-          </span>
-          <span className="text-sm text-gray-500">~2 minutes</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
-            style={{ width: `${((currentFormStep + 1) / formSteps.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-xl p-8 min-h-[300px] flex flex-col">
-        {/* Question */}
-        <div className="flex-1">
-          <div className="animate-fadeIn">
-            <label className="block text-2xl font-bold text-gray-800 mb-6">
-              {formSteps[currentFormStep].label}
-              {formSteps[currentFormStep].required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            
-{formSteps[currentFormStep].type === 'text' && (
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your name?
+              </label>
               <input
                 type="text"
-                value={formData[formSteps[currentFormStep].id] || ''}
-                onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
-                placeholder={formSteps[currentFormStep].placeholder}
-                className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-                autoFocus
+                value={formData.userName}
+                onChange={(e) => updateField('userName', e.target.value)}
+                placeholder="e.g., Sarah"
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               />
-            )}
-
-    {formSteps[currentFormStep].type === 'searchable-select' && (
-              <Select
-                options={majorCities}
-                value={majorCities.find(c => c.value === formData[formSteps[currentFormStep].id])}
-                onChange={(option) => updateField(formSteps[currentFormStep].id, option?.value)}
-                placeholder="Type to search cities..."
-                className="text-lg"
-                isClearable
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    padding: '8px',
-                    fontSize: '1.125rem',
-                    border: '2px solid #e5e7eb',
-                    '&:hover': { borderColor: '#60a5fa' }
-                  })
-                }}
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Where do you live?
+              </label>
+              <input
+                type="text"
+                value={formData.location}
+                onChange={(e) => updateField('location', e.target.value)}
+                placeholder="e.g., NYC, San Francisco, Austin..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               />
-            )}
+            </div>
 
-            {formSteps[currentFormStep].type === 'select' && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your heritage or cultural background?
+              </label>
+              <input
+                type="text"
+                value={formData.heritage}
+                onChange={(e) => updateField('heritage', e.target.value)}
+                placeholder="e.g., Eastern European, Irish, Italian, Mexican..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Your partner's name (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.partnerName}
+                onChange={(e) => updateField('partnerName', e.target.value)}
+                placeholder="e.g., Sarah"
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Your parent's names (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.parentNames}
+                onChange={(e) => updateField('parentNames', e.target.value)}
+                placeholder="e.g., Anna and Boris"
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Do you have other children? If so, what are their names?
+              </label>
+              <input
+                type="text"
+                value={formData.siblingNames}
+                onChange={(e) => updateField('siblingNames', e.target.value)}
+                placeholder="e.g., Emma, Liam"
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What style of name do you prefer?
+              </label>
               <select
-                value={formData[formSteps[currentFormStep].id] || ''}
-                onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
-                className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-                autoFocus
+                value={formData.style}
+                onChange={(e) => updateField('style', e.target.value)}
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               >
-                {formSteps[currentFormStep].options.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
+                <option value="">Choose a style...</option>
+                <option value="classic">Classic & Timeless</option>
+                <option value="modern">Modern & Trendy</option>
+                <option value="unique">Unique & Uncommon</option>
+                <option value="traditional">Traditional & Cultural</option>
               </select>
-            )}
+            </div>
 
-            {formSteps[currentFormStep].type === 'textarea' && (
-              <textarea
-                value={formData[formSteps[currentFormStep].id] || ''}
-                onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
-                placeholder={formSteps[currentFormStep].placeholder}
-                rows={6}
-                className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors resize-none"
-                autoFocus
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your favorite color? (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.favoriteColor}
+                onChange={(e) => updateField('favoriteColor', e.target.value)}
+                placeholder="e.g., Blue, Purple..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
               />
-            )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                What's your favorite food? (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.favoriteFood}
+                onChange={(e) => updateField('favoriteFood', e.target.value)}
+                placeholder="e.g., Pizza, Sushi..."
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Any other preferences or context?
+              </label>
+              <textarea
+                value={formData.additionalInfo}
+                onChange={(e) => updateField('additionalInfo', e.target.value)}
+                placeholder="Tell us anything else that matters to you... religious preferences, names you love/hate, family traditions, etc."
+                rows={4}
+                className="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors resize-none"
+              />
+            </div>
+
+            <button
+              onClick={generateSuggestions}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Generating...' : 'Generate My Personalized Names'}
+              <ArrowRight size={24} />
+            </button>
           </div>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex gap-4 mt-8">
-          {currentFormStep > 0 && (
-            <button
-              onClick={prevFormStep}
-              className="flex-1 bg-gray-200 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
-            >
-              <ArrowLeft size={20} />
-              Back
-            </button>
-          )}
-          
-          {!isLastStep ? (
-            <button
-              onClick={nextFormStep}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              Next
-              <ArrowRight size={20} />
-            </button>
-          ) : (
-            <button
-              onClick={generateSuggestions}
-              disabled={loading || !canSubmit}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Generating...' : 'Generate My Names'}
-              <Sparkles size={20} />
-            </button>
-          )}
-        </div>
+        <p className="text-center text-gray-500 text-sm mt-6">
+          We use your context to suggest culturally relevant, meaningful names that fit your family
+        </p>
       </div>
-
-      <p className="text-center text-gray-500 text-sm mt-6">
-        We use your context to suggest culturally relevant, meaningful names
-      </p>
     </div>
-  </div>
-);
+  );
 }
