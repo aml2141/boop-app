@@ -568,8 +568,6 @@ const shareIndividualName = (name) => {
     window.location.href = `sms:?body=${encoded}`;
   }
 };
-  const freeNames = suggestions.slice(0, 3);
-  const premiumNames = suggestions.slice(3);
 
   if (loading) {
     return (
@@ -924,3 +922,124 @@ if (step === 'form') {
   </div>
   );
   }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Crafting Your Perfect Names...</h2>
+          <p className="text-gray-600">Analyzing your family context and cultural background</p>
+        </div>
+      </div>
+    );
+  }
+
+  const freeNames = suggestions.slice(0, 3);
+  const premiumNames = suggestions.slice(3);
+
+  // Results screen
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Baby className="text-blue-600" size={48} />
+            <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Perfect Baby Names</h2>
+          <p className="text-gray-600">Personalized suggestions just for your family</p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-1 mb-8">
+          {freeNames.map((suggestion, index) => (
+            <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
+              <button
+                onClick={() => shareName(suggestion)}
+                className="absolute top-4 right-4 p-2 hover:bg-blue-50 rounded-full transition-colors"
+                title="Share this name"
+              >
+                <Star className="text-blue-500" size={24} />
+              </button>
+              
+              <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+              <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+              <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+              
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
+                <p className="text-gray-700 leading-relaxed">
+                  <strong className="text-blue-600">Why this works for you:</strong> {suggestion.reason || suggestion.reasoning}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {premiumNames.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Additional Names</h3>
+            <div className="grid gap-6 md:grid-cols-1">
+              {premiumNames.map((suggestion, index) => (
+                <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
+                  <button
+                    onClick={() => shareName(suggestion)}
+                    className="absolute top-4 right-4 p-2 hover:bg-blue-50 rounded-full transition-colors"
+                    title="Share this name"
+                  >
+                    <Star className="text-blue-500" size={24} />
+                  </button>
+                  
+                  <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+                  <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+                  <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                  
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      <strong className="text-blue-600">Why this works for you:</strong> {suggestion.reason || suggestion.reasoning}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-4">
+          {!hasUnlockedOnce && (
+            <button
+              onClick={handleGenerateMore}
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Sparkles size={20} />
+              Unlock 5 More Names - $0.99
+            </button>
+          )}
+
+          {hasUnlockedOnce && suggestions.length < 13 && (
+            <button
+              onClick={handleGenerateEightMore}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Sparkles size={20} />
+              Get 5 More Names - $0.99
+            </button>
+          )}
+
+          <button
+            onClick={downloadAsPDF}
+            className="w-full bg-gray-700 text-white font-bold py-4 rounded-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+          >
+            <Download size={20} />
+            {/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Save as Image' : 'Save as PDF'}
+          </button>
+
+          <button
+            onClick={reset}
+            className="w-full bg-white border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-50 transition-all"
+          >
+            Start Over
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
