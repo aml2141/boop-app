@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Sparkles, Baby, ArrowRight, RotateCcw, Lock, Star, Volume2, TrendingUp, RefreshCw, Download, Share2, Mail } from 'lucide-react';
-// Add animation styles
+import React, { useState, useEffect } from 'react';
+import { Baby, Sparkles, ArrowRight, ArrowLeft, Share2, Download, Star } from 'lucide-react';
+import Select from 'react-select';
 const styles = `
   @keyframes fadeIn {
     from {
@@ -61,7 +61,7 @@ const formSteps = [
     id: 'location',
     label: 'Where do you live?',
     placeholder: 'e.g., NYC, San Francisco, Austin...',
-    type: 'text',
+    type: 'searchable-select', // <-- Change from 'text' to 'searchable-select',
     required: true
   },
   {
@@ -119,7 +119,17 @@ const formSteps = [
     type: 'textarea',
     required: false
   }
+]; // <-- This closes formSteps
+
+const majorCities = [
+  // North America
+  { value: 'New York City, NY', label: 'New York City, NY', country: 'USA' },
+  { value: 'Los Angeles, CA', label: 'Los Angeles, CA', country: 'USA' },
+  // ... (paste the full list I gave you)
 ];
+
+const updateField = (field, value) => {
+  // ...
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -795,7 +805,7 @@ const shareIndividualName = (name) => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-8 min-h-[400px] flex flex-col">
+      <div className="bg-white rounded-2xl shadow-xl p-8 min-h-[300px] flex flex-col">
         {/* Question */}
         <div className="flex-1">
           <div className="animate-fadeIn">
@@ -804,7 +814,7 @@ const shareIndividualName = (name) => {
               {formSteps[currentFormStep].required && <span className="text-red-500 ml-1">*</span>}
             </label>
             
-            {formSteps[currentFormStep].type === 'text' && (
+{formSteps[currentFormStep].type === 'text' && (
               <input
                 type="text"
                 value={formData[formSteps[currentFormStep].id] || ''}
@@ -812,6 +822,26 @@ const shareIndividualName = (name) => {
                 placeholder={formSteps[currentFormStep].placeholder}
                 className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
                 autoFocus
+              />
+            )}
+
+            {formSteps[currentFormStep].type === 'searchable-select' && (
+              <Select
+                options={majorCities}
+                value={majorCities.find(c => c.value === formData[formSteps[currentFormStep].id])}
+                onChange={(option) => updateField(formSteps[currentFormStep].id, option?.value)}
+                placeholder="Type to search cities..."
+                className="text-lg"
+                isClearable
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    padding: '8px',
+                    fontSize: '1.125rem',
+                    border: '2px solid #e5e7eb',
+                    '&:hover': { borderColor: '#60a5fa' }
+                  })
+                }}
               />
             )}
 
@@ -830,30 +860,7 @@ const shareIndividualName = (name) => {
               </select>
             )}
 
-            {formSteps[currentFormStep].type === 'textarea' && (
-              <textarea
-                value={formData[formSteps[currentFormStep].id] || ''}
-                onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
-                placeholder={formSteps[currentFormStep].placeholder}
-                rows={6}
-                className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors resize-none"
-autoFocus
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex gap-4 mt-8">
-          {currentFormStep > 0 && (
-            <button
-              onClick={prevFormStep}
-              className="flex-1 bg-gray-200 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
-            >
-              <ArrowRight size={20} className="rotate-180" />
-              Back
-            </button>
-          )}
+            {formSteps[currentFormStep].type
           
           {!isLastStep ? (
             <button
