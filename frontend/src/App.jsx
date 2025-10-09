@@ -825,7 +825,7 @@ const shareIndividualName = (name) => {
               />
             )}
 
-            {formSteps[currentFormStep].type === 'searchable-select' && (
+    {formSteps[currentFormStep].type === 'searchable-select' && (
               <Select
                 options={majorCities}
                 value={majorCities.find(c => c.value === formData[formSteps[currentFormStep].id])}
@@ -860,7 +860,30 @@ const shareIndividualName = (name) => {
               </select>
             )}
 
-            {formSteps[currentFormStep].type
+            {formSteps[currentFormStep].type === 'textarea' && (
+              <textarea
+                value={formData[formSteps[currentFormStep].id] || ''}
+                onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
+                placeholder={formSteps[currentFormStep].placeholder}
+                rows={6}
+                className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors resize-none"
+                autoFocus
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex gap-4 mt-8">
+          {currentFormStep > 0 && (
+            <button
+              onClick={prevFormStep}
+              className="flex-1 bg-gray-200 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
+            >
+              <ArrowLeft size={20} />
+              Back
+            </button>
+          )}
           
           {!isLastStep ? (
             <button
