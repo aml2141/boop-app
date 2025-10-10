@@ -221,7 +221,7 @@ const generateSuggestions = async () => {
   }
 
   setLoading(true);
-  
+  console.log('Loading set to true, loading state:', loading);
   // Small delay to ensure loading screen renders
   await new Promise(resolve => setTimeout(resolve, 100));
   
