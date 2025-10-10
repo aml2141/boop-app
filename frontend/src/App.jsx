@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Baby, Sparkles, ArrowRight, ArrowLeft, Share2, Download, Star } from 'lucide-react';
 import Select from 'react-select';
+import html2canvas from 'html2canvas';
 
 // Animation styles
 const styles = `
@@ -403,119 +404,141 @@ await new Promise(resolve => setTimeout(resolve, 50));
     }
   };
 
-  const downloadAsPDF = () => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      window.print();
-      return;
+const downloadAsPDF = async () => {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    // Mobile: Capture as image
+    try {
+      const element = document.querySelector('.max-w-5xl'); // Capture the results container
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#e0f2fe',
+        scale: 2, // Higher quality
+        logging: false
+      });
+      
+      // Convert to blob and download
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'boop-baby-names.png';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+    } catch (error) {
+      console.error('Error generating image:', error);
+      alert('Could not generate image. Please try again.');
     }
-    
-    const printWindow = window.open('', '_blank');
-    const namesToShow = suggestions;
-    
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Your Boop Name Suggestions</title>
-          <style>
-            body { 
-              font-family: Arial, sans-serif; 
-              padding: 40px; 
-              max-width: 800px; 
-              margin: 0 auto;
-              background: linear-gradient(135deg, #e0f2fe 0%, #e0f7fa 100%);
-            }
-            h1 { 
-              color: #0284c7; 
-              text-align: center; 
-              margin-bottom: 10px;
-            }
-            .subtitle {
-              text-align: center;
-              color: #64748b;
-              margin-bottom: 30px;
-            }
-            .name-card { 
-              background: white; 
-              padding: 20px; 
-              margin: 20px 0; 
-              border-radius: 12px;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-            .name { 
-              font-size: 28px; 
-              font-weight: bold; 
-              color: #1e293b;
-              margin-bottom: 8px;
-            }
-            .pronunciation {
-              color: #0284c7;
-              font-size: 14px;
-              margin-bottom: 8px;
-            }
-            .meaning { 
-              font-style: italic; 
-              color: #64748b;
-              margin-bottom: 12px;
-            }
-            .reason { 
-              background: #f0f9ff; 
-              padding: 12px; 
-              border-radius: 8px;
-              color: #075985;
-              font-size: 14px;
-            }
-            .context {
-              background: white;
-              padding: 20px;
-              border-radius: 12px;
-              margin-top: 30px;
-            }
-            .context h3 {
-              color: #0284c7;
-              margin-bottom: 10px;
-            }
-            .context-item {
-              color: #64748b;
-              margin: 5px 0;
-            }
-            @media print {
-              body { background: white; }
-            }
-          </style>
-        </head>
-        <body>
-          <h1>👶 Your Boop Name Suggestions</h1>
-          <p class="subtitle">Personalized recommendations for your family</p>
-          ${namesToShow.map(n => `
-            <div class="name-card">
-              <div class="name">${n.name}</div>
-              <div class="pronunciation">🔊 ${n.pronunciation}</div>
-              <div class="meaning">"${n.meaning}"</div>
-              <div class="reason"><strong>Why this works:</strong> ${n.reason || n.reasoning || 'Personalized for your family'}</div>
-            </div>
-          `).join('')}
-          <div class="context">
-            <h3>Your Context</h3>
-            ${formData.userName ? `<div class="context-item"><strong>Your Name:</strong> ${formData.userName}</div>` : ''}
-            ${formData.location ? `<div class="context-item"><strong>Location:</strong> ${formData.location}</div>` : ''}
-            ${formData.heritage ? `<div class="context-item"><strong>Heritage:</strong> ${formData.heritage}</div>` : ''}
-            ${formData.siblingNames ? `<div class="context-item"><strong>Siblings:</strong> ${formData.siblingNames}</div>` : ''}
-            ${formData.style ? `<div class="context-item"><strong>Style:</strong> ${formData.style}</div>` : ''}
+    return;
+  }
+  
+  // Desktop: Keep existing PDF functionality
+  const printWindow = window.open('', '_blank');
+  const namesToShow = suggestions;
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Your Boop Name Suggestions</title>
+        <style>
+          body { 
+            font-family: Arial, sans-serif; 
+            padding: 40px; 
+            max-width: 800px; 
+            margin: 0 auto;
+            background: linear-gradient(135deg, #e0f2fe 0%, #e0f7fa 100%);
+          }
+          h1 { 
+            color: #0284c7; 
+            text-align: center; 
+            margin-bottom: 10px;
+          }
+          .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+          }
+          .name-card { 
+            background: white; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+          .name { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #1e293b;
+            margin-bottom: 8px;
+          }
+          .pronunciation {
+            color: #0284c7;
+            font-size: 14px;
+            margin-bottom: 8px;
+          }
+          .meaning { 
+            font-style: italic; 
+            color: #64748b;
+            margin-bottom: 12px;
+          }
+          .reason { 
+            background: #f0f9ff; 
+            padding: 12px; 
+            border-radius: 8px;
+            color: #075985;
+            font-size: 14px;
+          }
+          .context {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+          }
+          .context h3 {
+            color: #0284c7;
+            margin-bottom: 10px;
+          }
+          .context-item {
+            color: #64748b;
+            margin: 5px 0;
+          }
+          @media print {
+            body { background: white; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>👶 Your Boop Name Suggestions</h1>
+        <p class="subtitle">Personalized recommendations for your family</p>
+        ${namesToShow.map(n => `
+          <div class="name-card">
+            <div class="name">${n.name}</div>
+            <div class="pronunciation">🔊 ${n.pronunciation}</div>
+            <div class="meaning">"${n.meaning}"</div>
+            <div class="reason"><strong>Why this works:</strong> ${n.reason || n.reasoning || 'Personalized for your family'}</div>
           </div>
-        </body>
-      </html>
-    `;
-    
-    printWindow.document.write(html);
-    printWindow.document.close();
-    
-    setTimeout(() => {
-      printWindow.print();
-    }, 500);
-  };
+        `).join('')}
+        <div class="context">
+          <h3>Your Context</h3>
+          ${formData.userName ? `<div class="context-item"><strong>Your Name:</strong> ${formData.userName}</div>` : ''}
+          ${formData.location ? `<div class="context-item"><strong>Location:</strong> ${formData.location}</div>` : ''}
+          ${formData.heritage ? `<div class="context-item"><strong>Heritage:</strong> ${formData.heritage}</div>` : ''}
+          ${formData.siblingNames ? `<div class="context-item"><strong>Siblings:</strong> ${formData.siblingNames}</div>` : ''}
+          ${formData.style ? `<div class="context-item"><strong>Style:</strong> ${formData.style}</div>` : ''}
+        </div>
+      </body>
+    </html>
+  `;
+  
+  printWindow.document.write(html);
+  printWindow.document.close();
+  
+  setTimeout(() => {
+    printWindow.print();
+  }, 500);
+};
 
   // FORM SCREEN
   if (step === 'form') {
