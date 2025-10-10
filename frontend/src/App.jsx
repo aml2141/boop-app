@@ -60,12 +60,13 @@ export default function BabyNameGenerator() {
       type: 'text',
       required: true
     },
-    {
-      id: 'location',
-      label: 'Where do you live?',
-      type: 'e.g., Brooklyn, Austin, London, Tokyo...',
-      required: true
-    },
+   {
+  id: 'location',
+  label: 'Where do you live?',
+  placeholder: 'e.g., Brooklyn, Austin, London, Tokyo...',
+  type: 'text',
+  required: true
+  },
     {
       id: 'heritage',
       label: "What's your heritage or cultural background?",
