@@ -63,7 +63,7 @@ export default function BabyNameGenerator() {
     {
       id: 'location',
       label: 'Where do you live?',
-      type: 'searchable-select',
+      type: 'e.g., Brooklyn, Austin, London, Tokyo...',
       required: true
     },
     {
