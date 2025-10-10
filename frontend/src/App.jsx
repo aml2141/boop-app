@@ -404,6 +404,7 @@ await new Promise(resolve => setTimeout(resolve, 50));
     }
   };
 const saveNameAsImage = async (name, index) => {
+  console.log('saveNameAsImage called, name:', name.name, 'index:', index);
   try {
     // Find the specific name card
     const cards = document.querySelectorAll('.bg-white.rounded-2xl.shadow-xl');
