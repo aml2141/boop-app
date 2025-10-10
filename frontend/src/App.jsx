@@ -638,18 +638,20 @@ export default function BabyNameGenerator() {
     );
   }
 
-  // LOADING SCREEN
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Crafting Your Perfect Names...</h2>
-          <p className="text-gray-600">Analyzing your family context and cultural background</p>
+// LOADING SCREEN
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
+      <div className="text-center">
+        <div className="inline-block animate-bounce mb-4">
+          <Baby className="text-blue-600" size={64} />
         </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Crafting Your Perfect Names...</h2>
+        <p className="text-gray-600">Analyzing your family context and cultural background</p>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   // RESULTS SCREEN
   const freeNames = suggestions.slice(0, 3);
