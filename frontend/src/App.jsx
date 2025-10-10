@@ -215,15 +215,14 @@ export default function BabyNameGenerator() {
 const generateSuggestions = async () => {
   const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
   
-  if (!hasMinimumInput) {
-    alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
-    return;
-  }
+if (!hasMinimumInput) {
+  alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
+  return;
+}
 
-  setLoading(true);
-  console.log('Loading set to true, loading state:', loading);
-  // Small delay to ensure loading screen renders
-  await new Promise(resolve => setTimeout(resolve, 100));
+setStep('loading'); // Force screen change
+setLoading(true);
+await new Promise(resolve => setTimeout(resolve, 50));
   
   try {
     const response = await fetch(`${API_URL}/api/generate-names`, {
@@ -642,7 +641,7 @@ const generateSuggestions = async () => {
   }
 
 // LOADING SCREEN
-if (loading) {
+if (loading || step === 'loading') {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
       <div className="text-center">
