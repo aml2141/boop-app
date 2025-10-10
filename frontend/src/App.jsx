@@ -406,8 +406,9 @@ await new Promise(resolve => setTimeout(resolve, 50));
 
 const downloadAsPDF = async () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  console.log('downloadAsPDF called, isMobile:', isMobile, 'userAgent:', navigator.userAgent);
   
-if (isMobile) {
+  if (isMobile) {
   // Mobile: Capture and display image for user to save
   try {
     const element = document.querySelector('.max-w-5xl');
