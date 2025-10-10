@@ -403,7 +403,56 @@ await new Promise(resolve => setTimeout(resolve, 50));
       window.location.href = `sms:?body=${encoded}`;
     }
   };
-
+const saveNameAsImage = async (name, index) => {
+  try {
+    // Find the specific name card
+    const cards = document.querySelectorAll('.bg-white.rounded-2xl.shadow-xl');
+    const card = cards[index];
+    
+    if (!card) {
+      alert('Could not find name card');
+      return;
+    }
+    
+    // Capture the card
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#ffffff',
+      scale: 3, // High quality
+      logging: false,
+      width: 1080,
+      height: 1080
+    });
+    
+    const imageUrl = canvas.toDataURL('image/png');
+    
+    // Show in modal for mobile, download for desktop
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      const modal = document.createElement('div');
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+      
+      modal.innerHTML = `
+        <div style="text-align:center;max-width:500px;">
+          <h2 style="color:white;margin-bottom:20px;">Long-press to save</h2>
+          <img src="${imageUrl}" style="max-width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"/>
+          <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px;padding:14px 28px;background:#0EA5E9;color:white;border:none;border-radius:8px;font-size:18px;font-weight:bold;">Close</button>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    } else {
+      // Desktop: Download
+      const link = document.createElement('a');
+      link.download = `${name.name.toLowerCase()}-boop.png`;
+      link.href = imageUrl;
+      link.click();
+    }
+  } catch (error) {
+    console.error('Error saving name:', error);
+    alert('Could not save image. Please try again.');
+  }
+};
 const downloadAsPDF = async () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   console.log('downloadAsPDF called, isMobile:', isMobile, 'userAgent:', navigator.userAgent);
@@ -771,13 +820,22 @@ if (error) {
         <div className="grid gap-6 md:grid-cols-1 mb-8">
           {freeNames.map((suggestion, index) => (
             <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
-              <button
-                onClick={() => shareName(suggestion)}
-                className="absolute top-4 right-4 p-2 hover:bg-blue-50 rounded-full transition-colors"
-                title="Share this name"
-              >
-                <Star className="text-blue-500" size={24} />
-              </button>
+            <div className="absolute top-4 right-4 flex gap-2">
+  <button
+    onClick={() => shareName(suggestion)}
+    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+    title="Share this name"
+  >
+    <Share2 className="text-blue-500" size={24} />
+  </button>
+  <button
+    onClick={() => saveNameAsImage(suggestion, index)}
+    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+    title="Save as image"
+  >
+    <Download className="text-blue-500" size={24} />
+  </button>
+</div>
               
               <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
               <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
@@ -798,13 +856,22 @@ if (error) {
             <div className="grid gap-6 md:grid-cols-1">
               {premiumNames.map((suggestion, index) => (
                 <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
-                  <button
-                    onClick={() => shareName(suggestion)}
-                    className="absolute top-4 right-4 p-2 hover:bg-blue-50 rounded-full transition-colors"
-                    title="Share this name"
-                  >
-                    <Star className="text-blue-500" size={24} />
-                  </button>
+                 <div className="absolute top-4 right-4 flex gap-2">
+  <button
+    onClick={() => shareName(suggestion)}
+    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+    title="Share this name"
+  >
+    <Share2 className="text-blue-500" size={24} />
+  </button>
+  <button
+    onClick={() => saveNameAsImage(suggestion, index)}
+    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+    title="Save as image"
+  >
+    <Download className="text-blue-500" size={24} />
+  </button>
+</div>
                   
                   <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
                   <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
