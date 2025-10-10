@@ -212,18 +212,21 @@ export default function BabyNameGenerator() {
     }
   }, []);
 
-  const generateSuggestions = async () => {
-    const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
-    
-    if (!hasMinimumInput) {
-      alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
-      return;
-    }
+const generateSuggestions = async () => {
+  const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
+  
+  if (!hasMinimumInput) {
+    alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
+    return;
+  }
 
-    setLoading(true);
-    
-    try {
-      const response = await fetch(`${API_URL}/api/generate-names`, {
+  setLoading(true);
+  
+  // Small delay to ensure loading screen renders
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  try {
+    const response = await fetch(`${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
