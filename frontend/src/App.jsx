@@ -63,7 +63,7 @@ export default function BabyNameGenerator() {
     },
     {
   id: 'babyGender',
-  label: 'What type of names are you interested in?',
+  label: 'What types of names are you interested in?',
   type: 'select',
   required: true,
   options: [
