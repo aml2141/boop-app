@@ -109,13 +109,6 @@ export default function BabyNameGenerator() {
       ]
     },
     {
-      id: 'favoriteColor',
-      label: "What's your favorite color? (optional)",
-      placeholder: 'e.g., Blue, Purple...',
-      type: 'text',
-      required: false
-    },
-    {
       id: 'additionalInfo',
       label: 'Any other preferences or context?',
       placeholder: 'Tell us anything else that matters to you...',
