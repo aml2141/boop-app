@@ -37,6 +37,7 @@ export default function BabyNameGenerator() {
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
     babyGender: '',
@@ -266,21 +267,15 @@ await new Promise(resolve => setTimeout(resolve, 50));
       } else {
         throw new Error('Could not parse AI response');
       }
-    } catch (error) {
-      console.error('Error generating names:', error);
-      
-      const demoSuggestions = [
-        { name: 'Luna', meaning: 'Moon - Latin origin', reason: 'Universally beautiful, works across cultures', pronunciation: 'LOO-nah', rank: 14 },
-        { name: 'Oliver', meaning: 'Olive tree - Latin origin', reason: 'Classic choice, consistently popular', pronunciation: 'AH-liv-er', rank: 3 },
-        { name: 'Aria', meaning: 'Air, melody - Italian origin', reason: 'Modern, musical, and elegant', pronunciation: 'AH-ree-ah', rank: 22 }
-      ];
-      
-      setSuggestions(demoSuggestions);
-      setStep('results');
-      setHasGeneratedOnce(true);
-    } finally {
-      setLoading(false);
-    }
+} catch (error) {
+  console.error('Error generating names:', error);
+  setError({
+    type: 'generation',
+    message: 'We encountered an issue generating your names. Please try again.'
+  });
+} finally {
+  setLoading(false);
+}
   };
 
   const generateAdditionalNames = async (count) => {
@@ -313,12 +308,15 @@ await new Promise(resolve => setTimeout(resolve, 50));
         const newNames = JSON.parse(jsonMatch[0]);
         setSuggestions(prev => [...prev, ...newNames]);
       }
-    } catch (error) {
-      console.error('Error generating additional names:', error);
-      alert('Error generating more names. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+} catch (error) {
+  console.error('Error generating additional names:', error);
+  setError({
+    type: 'paid',
+    message: 'We encountered an issue generating your additional names. Please contact support for a refund.'
+  });
+} finally {
+  setLoading(false);
+}
   };
 
   const handleGenerateMore = async () => {
@@ -673,7 +671,54 @@ if (loading || step === 'loading') {
     </div>
   );
 }
+// ERROR MODAL
+if (error) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md">
+        <div className="text-center mb-6">
+          <div className="inline-block p-4 bg-red-100 rounded-full mb-4">
+            <span className="text-4xl">😔</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops! Something Went Wrong</h2>
+          <p className="text-gray-600">{error.message}</p>
+        </div>
 
+        <div className="space-y-3">
+          <button
+            onClick={() => {
+              setError(null);
+              setLoading(false);
+              if (error.type === 'generation') {
+                setStep('form');
+              }
+            }}
+            className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all"
+          >
+            Try Again
+          </button>
+
+          {error.type === 'paid' && (
+            
+            <a 
+            href="mailto:support@helloboop.com?subject=Refund Request&body=I paid for additional names but encountered an error."
+              className="block w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-200 transition-all text-center"
+            >
+              Request Refund
+            </a>
+          )}
+
+            <a
+            href="mailto:support@helloboop.com?subject=Error Report&body=I encountered an error while using Boop."
+            className="block w-full text-blue-600 hover:text-blue-700 text-center py-2"
+          >
+            Contact Support
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
   // RESULTS SCREEN
   const freeNames = suggestions.slice(0, 3);
   const premiumNames = suggestions.slice(3);
