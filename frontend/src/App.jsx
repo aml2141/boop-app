@@ -408,8 +408,8 @@ const downloadAsPDF = async () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   console.log('downloadAsPDF called, isMobile:', isMobile, 'userAgent:', navigator.userAgent);
   
-  if (isMobile) {
-  // Mobile: Capture and display image for user to save
+if (isMobile) {
+  // Mobile: Show image in modal overlay
   try {
     const element = document.querySelector('.max-w-5xl');
     if (!element) {
@@ -423,22 +423,22 @@ const downloadAsPDF = async () => {
       logging: false
     });
     
-    // Open in new window so user can save
     const imageUrl = canvas.toDataURL('image/png');
-    const newWindow = window.open();
-    newWindow.document.write(`
-      <html>
-        <head><title>Your Boop Names</title></head>
-        <body style="margin:0;padding:20px;text-align:center;background:#f0f9ff;">
-          <h2 style="color:#0284c7;">Long-press the image to save to your photos</h2>
-          <img src="${imageUrl}" style="max-width:100%;box-shadow:0 4px 12px rgba(0,0,0,0.15);"/>
-        </body>
-      </html>
-    `);
+    
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:auto;';
+    
+    modal.innerHTML = `
+      <h2 style="color:white;margin-bottom:20px;text-align:center;">Long-press the image below to save</h2>
+      <img src="${imageUrl}" style="max-width:100%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);"/>
+      <button onclick="this.parentElement.remove()" style="margin-top:20px;padding:12px 24px;background:#0EA5E9;color:white;border:none;border-radius:8px;font-size:16px;font-weight:bold;">Close</button>
+    `;
+    
+    document.body.appendChild(modal);
   } catch (error) {
     console.error('Error generating image:', error);
-    alert('Could not generate image. Please try the print option instead.');
-    window.print();
+    alert('Could not generate image. Please try again.');
   }
   return;
 }
