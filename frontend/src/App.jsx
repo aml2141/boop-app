@@ -649,6 +649,11 @@ await new Promise(resolve => setTimeout(resolve, 50));
           <p className="text-center text-gray-500 text-sm mt-6">
             We use your context to suggest culturally relevant, meaningful names
           </p>
+          <div className="text-center mt-4 space-x-4">
+  <a href="/terms" className="text-blue-600 hover:text-blue-700 text-sm">Terms of Service</a>
+  <span className="text-gray-400">•</span>
+  <a href="/privacy" className="text-blue-600 hover:text-blue-700 text-sm">Privacy Policy</a>
+</div>
         </div>
       </div>
     );
@@ -773,6 +778,12 @@ if (loading || step === 'loading') {
           >
             Start Over
           </button>
+        </div>
+        
+        <div className="text-center mt-8 space-x-4">
+          <a href="/terms" className="text-blue-600 hover:text-blue-700 text-sm">Terms of Service</a>
+          <span className="text-gray-400">•</span>
+          <a href="/privacy" className="text-blue-600 hover:text-blue-700 text-sm">Privacy Policy</a>
         </div>
       </div>
     </div>
