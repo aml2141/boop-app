@@ -576,7 +576,6 @@ export default function BabyNameGenerator() {
                     value={formData[formSteps[currentFormStep].id] || ''}
                     onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
                     className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-                    autoFocus
                   >
                     {formSteps[currentFormStep].options.map((opt) => (
                       <option key={opt.value} value={opt.value}>
