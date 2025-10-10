@@ -404,41 +404,113 @@ await new Promise(resolve => setTimeout(resolve, 50));
     }
   };
 const saveNameAsImage = async (name, index) => {
-  console.log('saveNameAsImage called, name:', name.name, 'index:', index);
+  console.log('Generating image for:', name.name);
+  
   try {
-    // Find the specific name card
-    const cards = document.querySelectorAll('.bg-white.rounded-2xl.shadow-xl');
-    const card = cards[index];
+    // Create a canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
     
-    if (!card) {
-      alert('Could not find name card');
-      return;
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+    gradient.addColorStop(0, '#e0f2fe');
+    gradient.addColorStop(1, '#0ea5e9');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1080, 1080);
+    
+    // White card background
+    ctx.fillStyle = 'white';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 10;
+    const cardPadding = 60;
+    const cardRadius = 30;
+    ctx.beginPath();
+    ctx.roundRect(cardPadding, cardPadding, 1080 - cardPadding * 2, 1080 - cardPadding * 2, cardRadius);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Logo at top
+    ctx.fillStyle = '#0284c7';
+    ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('👶 Boop', 540, 140);
+    
+    // Name
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 80px system-ui, -apple-system, sans-serif';
+    ctx.fillText(name.name, 540, 280);
+    
+    // Pronunciation
+    ctx.fillStyle = '#0284c7';
+    ctx.font = '32px system-ui, -apple-system, sans-serif';
+    ctx.fillText(`🔊 ${name.pronunciation}`, 540, 340);
+    
+    // Meaning
+    ctx.fillStyle = '#64748b';
+    ctx.font = 'italic 28px system-ui, -apple-system, sans-serif';
+    ctx.fillText(`"${name.meaning}"`, 540, 400);
+    
+    // "Why this works" section - blue background
+    ctx.fillStyle = '#f0f9ff';
+    ctx.fillRect(cardPadding + 40, 460, 1080 - cardPadding * 2 - 80, 400);
+    
+    // "Why this works" title
+    ctx.fillStyle = '#0284c7';
+    ctx.font = 'bold 28px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Why this works for you:', cardPadding + 60, 510);
+    
+    // Reasoning text (word wrap)
+    ctx.fillStyle = '#334155';
+    ctx.font = '24px system-ui, -apple-system, sans-serif';
+    const maxWidth = 880;
+    const lineHeight = 36;
+    let y = 560;
+    
+    const words = (name.reason || name.reasoning || '').split(' ');
+    let line = '';
+    
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + ' ';
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && i > 0) {
+        ctx.fillText(line, cardPadding + 60, y);
+        line = words[i] + ' ';
+        y += lineHeight;
+        
+        // Stop if too many lines
+        if (y > 820) break;
+      } else {
+        line = testLine;
+      }
     }
+    ctx.fillText(line, cardPadding + 60, y);
     
-    // Capture the card
-const canvas = await html2canvas(card, {
-  backgroundColor: '#ffffff',
-  scale: 3,
-  logging: false,
-  width: card.offsetWidth,
-  height: card.offsetHeight,
-  windowWidth: card.offsetWidth,
-  windowHeight: card.offsetHeight
-});
+    // Website at bottom
+    ctx.fillStyle = '#64748b';
+    ctx.font = '24px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('helloboop.com', 540, 980);
     
-    const imageUrl = canvas.toDataURL('image/png');
+    // Convert to image
+    const imageUrl = canvas.toDataURL('image/png', 1.0);
     
-    // Show in modal for mobile, download for desktop
+    // Show in modal
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
       const modal = document.createElement('div');
-      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto;';
       
       modal.innerHTML = `
-        <div style="text-align:center;max-width:500px;">
+        <div style="text-align:center;max-width:90vw;">
           <h2 style="color:white;margin-bottom:20px;">Long-press to save</h2>
-          <img src="${imageUrl}" style="max-width:100%;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"/>
+          <img src="${imageUrl}" style="width:100%;max-width:500px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"/>
           <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px;padding:14px 28px;background:#0EA5E9;color:white;border:none;border-radius:8px;font-size:18px;font-weight:bold;">Close</button>
         </div>
       `;
@@ -452,8 +524,8 @@ const canvas = await html2canvas(card, {
       link.click();
     }
   } catch (error) {
-    console.error('Error saving name:', error);
-    alert('Could not save image. Please try again.');
+    console.error('Error generating image:', error);
+    alert('Could not generate image. Please try again.');
   }
 };
 const downloadAsPDF = async () => {
