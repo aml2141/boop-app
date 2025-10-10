@@ -407,31 +407,40 @@ await new Promise(resolve => setTimeout(resolve, 50));
 const downloadAsPDF = async () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
-  if (isMobile) {
-    // Mobile: Capture as image
-    try {
-      const element = document.querySelector('.max-w-5xl'); // Capture the results container
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#e0f2fe',
-        scale: 2, // Higher quality
-        logging: false
-      });
-      
-      // Convert to blob and download
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'boop-baby-names.png';
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-      });
-    } catch (error) {
-      console.error('Error generating image:', error);
-      alert('Could not generate image. Please try again.');
+if (isMobile) {
+  // Mobile: Capture and display image for user to save
+  try {
+    const element = document.querySelector('.max-w-5xl');
+    if (!element) {
+      alert('Could not find content to capture');
+      return;
     }
-    return;
+    
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#e0f2fe',
+      scale: 2,
+      logging: false
+    });
+    
+    // Open in new window so user can save
+    const imageUrl = canvas.toDataURL('image/png');
+    const newWindow = window.open();
+    newWindow.document.write(`
+      <html>
+        <head><title>Your Boop Names</title></head>
+        <body style="margin:0;padding:20px;text-align:center;background:#f0f9ff;">
+          <h2 style="color:#0284c7;">Long-press the image to save to your photos</h2>
+          <img src="${imageUrl}" style="max-width:100%;box-shadow:0 4px 12px rgba(0,0,0,0.15);"/>
+        </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error('Error generating image:', error);
+    alert('Could not generate image. Please try the print option instead.');
+    window.print();
   }
+  return;
+}
   
   // Desktop: Keep existing PDF functionality
   const printWindow = window.open('', '_blank');
