@@ -39,6 +39,7 @@ export default function BabyNameGenerator() {
   const [showPopularity, setShowPopularity] = useState(false);
   const [formData, setFormData] = useState({
     userName: '',
+    babyGender: '',
     location: '',
     parentNames: '',
     siblingNames: '',
@@ -60,6 +61,19 @@ export default function BabyNameGenerator() {
       type: 'text',
       required: true
     },
+    {
+  id: 'babyGender',
+  label: 'What type of names are you interested in?',
+  type: 'select',
+  required: true,
+  options: [
+    { value: '', label: 'Choose...' },
+    { value: 'boy', label: 'Boy names' },
+    { value: 'girl', label: 'Girl names' },
+    { value: 'neutral', label: 'Gender-neutral names' },
+    { value: 'any', label: "I'm open to all names" }
+  ]
+},
    {
   id: 'location',
   label: 'Where do you live?',
