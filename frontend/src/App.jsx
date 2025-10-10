@@ -416,13 +416,15 @@ const saveNameAsImage = async (name, index) => {
     }
     
     // Capture the card
-    const canvas = await html2canvas(card, {
-      backgroundColor: '#ffffff',
-      scale: 3, // High quality
-      logging: false,
-      width: 1080,
-      height: 1080
-    });
+const canvas = await html2canvas(card, {
+  backgroundColor: '#ffffff',
+  scale: 3,
+  logging: false,
+  width: card.offsetWidth,
+  height: card.offsetHeight,
+  windowWidth: card.offsetWidth,
+  windowHeight: card.offsetHeight
+});
     
     const imageUrl = canvas.toDataURL('image/png');
     
@@ -909,14 +911,6 @@ if (error) {
               Get 5 More Names - $0.99
             </button>
           )}
-
-          <button
-            onClick={downloadAsPDF}
-            className="w-full bg-gray-700 text-white font-bold py-4 rounded-lg hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
-          >
-            <Download size={20} />
-            {/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Save as Image' : 'Save as PDF'}
-          </button>
 
           <button
             onClick={reset}
