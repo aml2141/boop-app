@@ -240,55 +240,74 @@ export default function BabyNameGenerator() {
 const generateSuggestions = async () => {
   const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
   
-if (!hasMinimumInput) {
-  alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
-  return;
-}
+  if (!hasMinimumInput) {
+    alert('Please fill out at least your name, location, heritage, or style preference to get personalized suggestions!');
+    return;
+  }
 
-setStep('loading'); // Force screen change
-setLoading(true);
-await new Promise(resolve => setTimeout(resolve, 50));
-  
+  setStep('loading');
+  setLoading(true);
+  await new Promise(resolve => setTimeout(resolve, 50));
+
   try {
     const response = await fetch(`${API_URL}/api/generate-names`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formData: formData,
-          count: 5
-        })
-      });
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        formData: formData,
+        count: 5
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error('API call failed');
-      }
+    if (!response.ok) {
+      throw new Error('Failed to generate names');
+    }
 
-      const data = await response.json();
-      const content = data.names;
-      console.log('API returned names:', content);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
       
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        const names = JSON.parse(jsonMatch[0]);
-        console.log('Parsed names count:', names.length);
-        setSuggestions(names);
-        setStep('results');
-        setHasGeneratedOnce(true);
-      } else {
-        throw new Error('Could not parse AI response');
+      if (done) break;
+      
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = JSON.parse(line.slice(6));
+          
+          if (data.chunk) {
+            fullContent += data.chunk;
+          }
+          
+          if (data.done) {
+            // Parse the complete JSON
+            const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
+            if (jsonMatch) {
+              const names = JSON.parse(jsonMatch[0]);
+              setSuggestions(names);
+              setStep('results');
+              setHasGeneratedOnce(true);
+            }
+          }
+        }
       }
-} catch (error) {
-  console.error('Error generating names:', error);
-  setError({
-    type: 'generation',
-    message: 'We encountered an issue generating your names. Please try again.'
-  });
-} finally {
-  setLoading(false);
-}
-  };
+    }
+  } catch (error) {
+    console.error('Error generating names:', error);
+    setError({
+      type: 'generation',
+      message: 'We encountered an issue generating your names. Please try again.'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const generateAdditionalNames = async (count) => {
     setLoading(true);
