@@ -43,13 +43,12 @@ app.post('/api/generate-names', async (req, res) => {
     });
 
     const { formData, existingNames, count } = req.body;
-    const nameCount = count || 3; // Default to 3 names
+    const nameCount = count || 3;
 
     console.log('Generating', nameCount, 'names');
-console.log('Existing names to avoid:', existingNames || 'none');
+    console.log('Existing names to avoid:', existingNames || 'none');
 
-    // Build the prompt from form data
-const prompt = `You are a baby name expert. Generate ${nameCount} diverse baby name suggestions.
+    let prompt = `You are a baby name expert. Generate ${nameCount} diverse baby name suggestions.
 
 Context:
 - Name: ${formData.userName || 'Not provided'}
@@ -62,37 +61,19 @@ Context:
 - Preferences: ${formData.meaning || 'Not provided'}
 - Avoid: ${formData.avoid || 'None'}
 
-${existingNames && existingNames.length > 0 ? `Avoid: ${existingNames.join(', ')}` : ''}
+${existingNames && existingNames.length > 0 ? `🚨 MUST AVOID these previously suggested names: ${existingNames.join(', ')}` : ''}
 
-For each name provide: name, pronunciation, meaning/origin, why it works (2-3 sentences), 2024 SSA rank (or "Not ranked"), 2025 trend (Rising/Timeless/Declining), and regional note if relevant.
-
-Return JSON array:
-[{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
-    // Add existing names to avoid if provided
-    if (existingNames) {
-      prompt += `\n\n🚨 CRITICAL REQUIREMENT 🚨
-You have already suggested these names: ${existingNames}
-
-You MUST NOT suggest ANY of these names again. Every single one of the ${nameCount} names you generate MUST be completely different and unique from this list. Double-check your response before providing it to ensure no duplicates.`;
-    }
-
-    prompt += `\n\nFormat as JSON array with objects containing: name, pronunciation, meaning, origin, reason (must reference specific family context), rank (estimated national rank as a number)`;
-
-// Add existing names to avoid if provided
-if (existingNames) {
-  prompt += `\n\n🚨 CRITICAL REQUIREMENT 🚨
-You have already suggested these names: ${existingNames}
-
-You MUST NOT suggest ANY of these names again. Every single one of the ${nameCount} names you generate MUST be completely different and unique from this list. Double-check your response before providing it to ensure no duplicates.`;
-}
-
-    prompt += `\n\nFor each name, provide:
+For each name provide:
 1. The name
-2. Pronunciation guide
+2. Pronunciation guide (phonetic)
 3. Meaning and origin
-4. Why it fits their family story
+4. Why it works for this family (2-3 sentences referencing their context)
+5. 2024 SSA rank (use real data if known, or "Not ranked")
+6. 2025 trend: "Rising", "Timeless", or "Declining"
+7. Regional note if relevant to their location
 
-Format as JSON array with objects containing: name, pronunciation, meaning, origin, reasoning`;
+Return ONLY a JSON array:
+[{"name":"Name","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
 
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
@@ -104,17 +85,15 @@ Format as JSON array with objects containing: name, pronunciation, meaning, orig
         }
       ]
     });
-
-    // Parse the response
-    const responseText = message.content[0].text;
+    // Stripe checkout endpoint
+    const content = message.content[0].text;
     
-    res.json({ names: responseText });
+    res.json({ names: content });
   } catch (error) {
     console.error('Error generating names:', error);
     res.status(500).json({ error: error.message });
   }
 });
-// Stripe checkout endpoint
 app.post('/api/create-checkout-session', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   
