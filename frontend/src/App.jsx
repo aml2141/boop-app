@@ -534,7 +534,40 @@ const saveNameAsImage = async (name, index) => {
       }
     }
     ctx.fillText(line, cardPadding + 60, y);
+    // Popularity section (if available)
+    let popularityY = y + 60; // Start below the reasoning text
     
+    if (name.rank2024 || name.trend2025) {
+      // Purple background box
+      ctx.fillStyle = '#faf5ff';
+      ctx.fillRect(cardPadding + 40, popularityY, 1080 - cardPadding * 2 - 80, name.regionalNote ? 100 : 70);
+      
+      // Popularity text
+      ctx.fillStyle = '#7c3aed';
+      ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'left';
+      
+      let popText = '';
+      if (name.rank2024 && name.rank2024 !== "Not ranked") {
+        popText = `📊 2024 Rank: #${name.rank2024}`;
+      } else if (name.rank2024 === "Not ranked") {
+        popText = '📊 Unique choice';
+      }
+      
+      if (name.trend2025) {
+        const emoji = name.trend2025 === "Rising" ? "↗️" : name.trend2025 === "Declining" ? "↘️" : "✨";
+        popText += ` • ${emoji} ${name.trend2025}`;
+      }
+      
+      ctx.fillText(popText, cardPadding + 60, popularityY + 35);
+      
+      // Regional note
+      if (name.regionalNote) {
+        ctx.fillStyle = '#9333ea';
+        ctx.font = 'italic 18px system-ui, -apple-system, sans-serif';
+        ctx.fillText(name.regionalNote, cardPadding + 60, popularityY + 65);
+      }
+    }
     // Website at bottom
     ctx.fillStyle = '#64748b';
     ctx.font = '24px system-ui, -apple-system, sans-serif';
