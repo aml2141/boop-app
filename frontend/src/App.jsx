@@ -880,7 +880,7 @@ if (error) {
 }
   // RESULTS SCREEN
   const freeNames = suggestions.slice(0, 5);
-  const premiumNames = suggestions.slice(3);
+  const premiumNames = suggestions.slice(5);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
