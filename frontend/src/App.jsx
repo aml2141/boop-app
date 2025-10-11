@@ -248,7 +248,7 @@ await new Promise(resolve => setTimeout(resolve, 50));
         },
         body: JSON.stringify({
           formData: formData,
-          count: 3
+          count: 5
         })
       });
 
@@ -877,7 +877,7 @@ if (error) {
   );
 }
   // RESULTS SCREEN
-  const freeNames = suggestions.slice(0, 3);
+  const freeNames = suggestions.slice(0, 5);
   const premiumNames = suggestions.slice(3);
 
   return (
