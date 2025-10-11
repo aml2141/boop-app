@@ -38,6 +38,7 @@ export default function BabyNameGenerator() {
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
+  const [startOverCount, setStartOverCount] = useState(0);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
@@ -205,6 +206,14 @@ export default function BabyNameGenerator() {
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
     }
+    if (params.get('action') === 'startover') {
+  setStartOverCount(0); // Reset counter after payment
+  setStep('form');
+  setSuggestions([]);
+  setHasUnlockedOnce(true);
+  sessionStorage.clear();
+  window.history.replaceState({}, '', window.location.pathname);
+}
   }, [suggestions]);
 
   useEffect(() => {
@@ -379,18 +388,51 @@ await new Promise(resolve => setTimeout(resolve, 50));
     }
   };
 
-  const reset = () => {
-    setStep('form');
-    setSuggestions([]);
-    setLoading(false);
-    setIsPremium(false);
-    setHasGeneratedOnce(false);
-    setHasUnlockedOnce(false);
-    setShowPopularity(false);
-    setCurrentFormStep(0);
-    sessionStorage.removeItem('boopFormData');
-    sessionStorage.removeItem('boopSuggestions');
-  };
+const reset = () => {
+  // Check if they've used their free start over
+  if (startOverCount >= 1 && !hasUnlockedOnce) {
+    // Show paywall
+    handleStartOverPayment();
+    return;
+  }
+  
+  setStep('form');
+  setSuggestions([]);
+  setLoading(false);
+  setIsPremium(false);
+  setHasGeneratedOnce(false);
+  setShowPopularity(false);
+  setCurrentFormStep(0);
+  setStartOverCount(startOverCount + 1);
+  sessionStorage.removeItem('boopFormData');
+  sessionStorage.removeItem('boopSuggestions');
+};
+
+const handleStartOverPayment = async () => {
+  sessionStorage.setItem('boopFormData', JSON.stringify(formData));
+  sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
+  
+  try {
+    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+        successUrl: window.location.href + '?action=startover',
+        cancelUrl: window.location.href,
+      }),
+    });
+
+    const { sessionId } = await response.json();
+    const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+    await stripe.redirectToCheckout({ sessionId });
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('Payment failed. Please try again.');
+  }
+};
 
   const shareName = (name) => {
     const text = `Check out this baby name: ${name.name} (${name.pronunciation})\n\nMeaning: ${name.meaning}\n\nWhy it works: ${name.reason || name.reasoning}`;
