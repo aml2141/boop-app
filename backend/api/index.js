@@ -75,20 +75,34 @@ For each name provide:
 Return ONLY a JSON array:
 [{"name":"Name","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
 
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ]
-    });
-    // Stripe checkout endpoint
-    const content = message.content[0].text;
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  max_tokens: 2500,
+  stream: true,  // <-- ADD THIS
+  messages: [
+    {
+      role: 'user',
+      content: prompt
+    }
+  ]
+});
+let fullContent = '';
     
-    res.json({ names: content });
+    // Set headers for streaming
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    
+    for await (const event of message) {
+      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+        const chunk = event.delta.text;
+        fullContent += chunk;
+        res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
+      }
+    }
+    
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
   } catch (error) {
     console.error('Error generating names:', error);
     res.status(500).json({ error: error.message });
