@@ -217,7 +217,7 @@ export default function BabyNameGenerator() {
         setSuggestions(parsed);
         setStep('results');
         setHasGeneratedOnce(true);
-        if (parsed.length > 3) {
+        if (parsed.length > 5) {
           setHasUnlockedOnce(true);
         }
       }
@@ -258,10 +258,12 @@ await new Promise(resolve => setTimeout(resolve, 50));
 
       const data = await response.json();
       const content = data.names;
+      console.log('API returned names:', content);
       
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         const names = JSON.parse(jsonMatch[0]);
+        console.log('Parsed names count:', names.length);
         setSuggestions(names);
         setStep('results');
         setHasGeneratedOnce(true);
