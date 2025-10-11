@@ -49,44 +49,25 @@ app.post('/api/generate-names', async (req, res) => {
 console.log('Existing names to avoid:', existingNames || 'none');
 
     // Build the prompt from form data
-const prompt = `You are a baby name expert. Generate ${nameCount} diverse, high-quality baby name suggestions based on the following context:
+const prompt = `You are a baby name expert. Generate ${nameCount} diverse baby name suggestions.
 
-Name: ${formData.userName || 'Not provided'}
-Baby Gender Preference: ${formData.babyGender || 'Any'}
-Location: ${formData.location || 'Not provided'}
-Cultural Heritage: ${formData.heritage || 'Not provided'}
-Partner Names: ${formData.parentNames || 'Not provided'}
-Sibling Names: ${formData.siblingNames || 'Not provided'}
-Style Preferences: ${formData.style || 'Not provided'}
-Important Factors: ${formData.meaning || 'Not provided'}
-Names to Avoid: ${formData.avoid || 'None'}
-Additional Context: ${formData.notes || 'None'}
+Context:
+- Name: ${formData.userName || 'Not provided'}
+- Gender: ${formData.babyGender || 'Any'}
+- Location: ${formData.location || 'Not provided'}
+- Heritage: ${formData.heritage || 'Not provided'}
+- Partners: ${formData.parentNames || 'Not provided'}
+- Siblings: ${formData.siblingNames || 'Not provided'}
+- Style: ${formData.style || 'Not provided'}
+- Preferences: ${formData.meaning || 'Not provided'}
+- Avoid: ${formData.avoid || 'None'}
 
-${existingNames && existingNames.length > 0 ? `Previously suggested names to avoid duplicating: ${existingNames.join(', ')}` : ''}
+${existingNames && existingNames.length > 0 ? `Avoid: ${existingNames.join(', ')}` : ''}
 
-For EACH name, provide:
-1. The name itself
-2. Pronunciation guide (phonetic)
-3. Meaning and origin
-4. Detailed reasoning for why this name works for this specific family (2-3 sentences, referencing their location, heritage, style preferences, and other context)
-5. 2024 SSA popularity rank (use actual data if you know it, or estimate "Not ranked" if outside top 1000)
-6. 2025 trend prediction: "Rising", "Timeless", or "Declining"
-7. Regional popularity note if relevant to their location (e.g., "Especially popular in Texas" or "Classic Southern choice")
+For each name provide: name, pronunciation, meaning/origin, why it works (2-3 sentences), 2024 SSA rank (or "Not ranked"), 2025 trend (Rising/Timeless/Declining), and regional note if relevant.
 
-Return ONLY a JSON array with this exact structure:
-[
-  {
-    "name": "Name",
-    "pronunciation": "pronunciation guide",
-    "meaning": "meaning and origin",
-    "reason": "why this works for them",
-    "rank2024": "15" or "Not ranked",
-    "trend2025": "Rising" or "Timeless" or "Declining",
-    "regionalNote": "Especially popular in Texas" or null
-  }
-]
-
-Focus on names that truly fit their cultural context, location, and preferences. Make each suggestion thoughtful and personalized.`;
+Return JSON array:
+[{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
     // Add existing names to avoid if provided
     if (existingNames) {
       prompt += `\n\n🚨 CRITICAL REQUIREMENT 🚨
