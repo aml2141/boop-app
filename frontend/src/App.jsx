@@ -958,6 +958,30 @@ if (error) {
               
               <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
               <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+              {(suggestion.rank2024 || suggestion.trend2025) && (
+  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 mb-3">
+    <div className="flex items-center gap-2 text-sm">
+      {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
+        <span className="text-purple-700 font-semibold">
+          📊 2024 Rank: #{suggestion.rank2024}
+        </span>
+      )}
+      {suggestion.rank2024 === "Not ranked" && (
+        <span className="text-purple-700 font-semibold">
+          📊 Unique choice
+        </span>
+      )}
+      {suggestion.trend2025 && (
+        <span className="text-purple-700">
+          • {suggestion.trend2025 === "Rising" ? "↗️" : suggestion.trend2025 === "Declining" ? "↘️" : "✨"} {suggestion.trend2025}
+        </span>
+      )}
+    </div>
+    {suggestion.regionalNote && (
+      <p className="text-purple-600 text-xs mt-1 italic">{suggestion.regionalNote}</p>
+    )}
+  </div>
+)}
               <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
               
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
@@ -994,6 +1018,30 @@ if (error) {
                   
                   <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
                   <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+                  {(suggestion.rank2024 || suggestion.trend2025) && (
+  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 mb-3">
+    <div className="flex items-center gap-2 text-sm">
+      {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
+        <span className="text-purple-700 font-semibold">
+          📊 2024 Rank: #{suggestion.rank2024}
+        </span>
+      )}
+      {suggestion.rank2024 === "Not ranked" && (
+        <span className="text-purple-700 font-semibold">
+          📊 Unique choice
+        </span>
+      )}
+      {suggestion.trend2025 && (
+        <span className="text-purple-700">
+          • {suggestion.trend2025 === "Rising" ? "↗️" : suggestion.trend2025 === "Declining" ? "↘️" : "✨"} {suggestion.trend2025}
+        </span>
+      )}
+    </div>
+    {suggestion.regionalNote && (
+      <p className="text-purple-600 text-xs mt-1 italic">{suggestion.regionalNote}</p>
+    )}
+  </div>
+)}
                   <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
                   
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
