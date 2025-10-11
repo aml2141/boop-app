@@ -549,7 +549,7 @@ const saveNameAsImage = async (name, index) => {
       
       let popText = '';
       if (name.rank2024 && name.rank2024 !== "Not ranked") {
-        popText = `📊 2024 Rank: #${name.rank2024}`;
+        popText = `📊 2024 Rank: ${name.rank2024}`;
       } else if (name.rank2024 === "Not ranked") {
         popText = '📊 Unique choice';
       }
@@ -996,7 +996,7 @@ if (error) {
     <div className="flex items-center gap-2 text-sm">
       {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
         <span className="text-purple-700 font-semibold">
-          📊 2024 Rank: #{suggestion.rank2024}
+          📊 2024 Rank: {suggestion.rank2024}
         </span>
       )}
       {suggestion.rank2024 === "Not ranked" && (
