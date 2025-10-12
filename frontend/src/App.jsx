@@ -282,35 +282,43 @@ const generateSuggestions = async () => {
     const decoder = new TextDecoder();
     let fullContent = '';
 
-    while (true) {
-      const { done, value } = await reader.read();
+while (true) {
+  const { done, value } = await reader.read();
+  
+  if (done) {
+    console.log('Stream complete');
+    break;
+  }
+  
+  const chunk = decoder.decode(value);
+  console.log('Received chunk:', chunk);
+  const lines = chunk.split('\n');
+  
+  for (const line of lines) {
+    if (line.startsWith('data: ')) {
+      console.log('Processing line:', line);
+      const data = JSON.parse(line.slice(6));
       
-      if (done) break;
+      if (data.chunk) {
+        fullContent += data.chunk;
+        console.log('Added chunk, total length:', fullContent.length);
+      }
       
-      const chunk = decoder.decode(value);
-      const lines = chunk.split('\n');
-      
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = JSON.parse(line.slice(6));
-          
-          if (data.chunk) {
-            fullContent += data.chunk;
-          }
-          
-          if (data.done) {
-            // Parse the complete JSON
-            const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-              const names = JSON.parse(jsonMatch[0]);
-              setSuggestions(names);
-              setStep('results');
-              setHasGeneratedOnce(true);
-            }
-          }
+      if (data.done) {
+        console.log('Received done signal, parsing:', fullContent);
+        // Parse the complete JSON
+        const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          const names = JSON.parse(jsonMatch[0]);
+          console.log('Parsed names:', names.length);
+          setSuggestions(names);
+          setStep('results');
+          setHasGeneratedOnce(true);
         }
       }
     }
+  }
+}
   } catch (error) {
     console.error('Error generating names:', error);
     setError({
