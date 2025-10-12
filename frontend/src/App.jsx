@@ -299,21 +299,26 @@ while (true) {
     if (line.startsWith('data: ')) {
       const data = JSON.parse(line.slice(6));
       
-      if (data.chunk) {
-        fullContent += data.chunk;
-        
-        // Try to extract complete name objects
-        const nameMatches = fullContent.match(/\{[^}]*"name"[^}]*"reason"[^}]*"regionalNote"[^}]*\}/g);
-        
-        if (nameMatches && nameMatches.length > displayedNames.length) {
-          // We have new complete names!
-          const newNames = nameMatches.slice(displayedNames.length).map(match => {
-            try {
-              return JSON.parse(match);
-            } catch {
-              return null;
-            }
-          }).filter(n => n);
+if (data.chunk) {
+  fullContent += data.chunk;
+  console.log('Current content length:', fullContent.length);
+  
+  // Try to extract complete name objects as they arrive
+  const nameMatches = fullContent.match(/\{[^}]*"name"[^}]*"reason"[^}]*"regionalNote"[^}]*\}/g);
+  console.log('Name matches found:', nameMatches ? nameMatches.length : 0);
+  
+  if (nameMatches && nameMatches.length > displayedNames.length) {
+    console.log('Attempting to parse new names...');
+    // Parse new complete names
+    const newNames = nameMatches.slice(displayedNames.length).map(match => {
+      try {
+        console.log('Parsing match:', match.substring(0, 50) + '...');
+        return JSON.parse(match);
+      } catch (e) {
+        console.log('Parse failed:', e.message);
+        return null;
+      }
+    }).filter(n => n);
           
           if (newNames.length > 0) {
             displayedNames = [...displayedNames, ...newNames];
