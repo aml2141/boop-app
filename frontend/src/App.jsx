@@ -282,20 +282,14 @@ const generateSuggestions = async () => {
     const decoder = new TextDecoder();
     let fullContent = '';
 
+let fullContent = '';
+let displayedNames = [];
+
 while (true) {
   const { done, value } = await reader.read();
   
   if (done) {
-    console.log('Stream ended naturally, parsing content');
-    // Parse whatever we have
-    const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      const names = JSON.parse(jsonMatch[0]);
-      console.log('Parsed names:', names.length);
-      setSuggestions(names);
-      setStep('results');
-      setHasGeneratedOnce(true);
-    }
+    console.log('Stream complete');
     break;
   }
   
@@ -308,6 +302,30 @@ while (true) {
       
       if (data.chunk) {
         fullContent += data.chunk;
+        
+        // Try to extract complete name objects
+        const nameMatches = fullContent.match(/\{[^}]*"name"[^}]*"reason"[^}]*"regionalNote"[^}]*\}/g);
+        
+        if (nameMatches && nameMatches.length > displayedNames.length) {
+          // We have new complete names!
+          const newNames = nameMatches.slice(displayedNames.length).map(match => {
+            try {
+              return JSON.parse(match);
+            } catch {
+              return null;
+            }
+          }).filter(n => n);
+          
+          if (newNames.length > 0) {
+            displayedNames = [...displayedNames, ...newNames];
+            setSuggestions([...displayedNames]);
+            if (displayedNames.length === 1) {
+              // Show results screen as soon as first name arrives
+              setStep('results');
+              setHasGeneratedOnce(true);
+            }
+          }
+        }
       }
     }
   }
