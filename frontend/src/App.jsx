@@ -347,7 +347,7 @@ if (jsonMatch) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+          priceId: 'price_1SHFBRPnhWpLDLv4YzyXXxDj',
           successUrl: window.location.href + '?generate=5',
           cancelUrl: window.location.href,
         }),
@@ -422,7 +422,7 @@ const handleStartOverPayment = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+        priceId: 'price_1SHFBRPnhWpLDLv4YzyXXxDj',
         successUrl: window.location.href + '?action=startover',
         cancelUrl: window.location.href,
       }),
