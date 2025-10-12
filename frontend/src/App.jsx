@@ -303,6 +303,11 @@ if (data.chunk) {
   fullContent += data.chunk;
   console.log('Current content length:', fullContent.length);
   
+  // Log a sample when we have enough content
+  if (fullContent.length > 200 && fullContent.length < 220) {
+    console.log('Content sample:', fullContent);
+  }
+  
   // Try to extract complete name objects as they arrive
   const nameMatches = fullContent.match(/\{[^}]*"name"[^}]*"reason"[^}]*"regionalNote"[^}]*\}/g);
   console.log('Name matches found:', nameMatches ? nameMatches.length : 0);
