@@ -39,6 +39,11 @@ export default function BabyNameGenerator() {
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
   const [startOverCount, setStartOverCount] = useState(0);
+  const [favorites, setFavorites] = useState(() => {
+  const saved = localStorage.getItem('boopFavorites');
+  return saved ? JSON.parse(saved) : [];
+});
+const [showFavorites, setShowFavorites] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
@@ -450,6 +455,23 @@ const handleStartOverPayment = async () => {
       window.location.href = `sms:?body=${encoded}`;
     }
   };
+  const toggleFavorite = (name) => {
+  const isFavorited = favorites.some(fav => fav.name === name.name);
+  let newFavorites;
+  
+  if (isFavorited) {
+    newFavorites = favorites.filter(fav => fav.name !== name.name);
+  } else {
+    newFavorites = [...favorites, name];
+  }
+  
+  setFavorites(newFavorites);
+  localStorage.setItem('boopFavorites', JSON.stringify(newFavorites));
+};
+
+const isFavorited = (name) => {
+  return favorites.some(fav => fav.name === name.name);
+};
 const saveNameAsImage = async (name, index) => {
   console.log('Generating image for:', name.name);
   
@@ -954,9 +976,11 @@ if (error) {
         </div>
       </div>
     </div>
-  );
+);
 }
-  // RESULTS SCREEN
+
+// RESULTS SCREEN
+if (step === 'results') {
   const freeNames = suggestions.slice(0, 5);
   const premiumNames = suggestions.slice(5);
 
@@ -975,7 +999,7 @@ if (error) {
         <div className="grid gap-6 md:grid-cols-1 mb-8">
           {freeNames.map((suggestion, index) => (
             <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
-            <div className="absolute top-4 right-4 flex gap-2">
+ <div className="absolute top-4 right-4 flex gap-2">
   <button
     onClick={() => shareName(suggestion)}
     className="p-2 hover:bg-blue-50 rounded-full transition-colors"
@@ -990,6 +1014,18 @@ if (error) {
   >
     <Download className="text-blue-500" size={24} />
   </button>
+  {hasUnlockedOnce && (
+    <button
+      onClick={() => toggleFavorite(suggestion)}
+      className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+      title={isFavorited(suggestion) ? "Remove from favorites" : "Add to favorites"}
+    >
+      <Star 
+        className={isFavorited(suggestion) ? "text-yellow-500 fill-yellow-500" : "text-gray-400"} 
+        size={24} 
+      />
+    </button>
+  )}
 </div>
               
               <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
@@ -1035,7 +1071,7 @@ if (error) {
             <div className="grid gap-6 md:grid-cols-1">
               {premiumNames.map((suggestion, index) => (
                 <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
-                 <div className="absolute top-4 right-4 flex gap-2">
+<div className="absolute top-4 right-4 flex gap-2">
   <button
     onClick={() => shareName(suggestion)}
     className="p-2 hover:bg-blue-50 rounded-full transition-colors"
@@ -1050,6 +1086,18 @@ if (error) {
   >
     <Download className="text-blue-500" size={24} />
   </button>
+  {hasUnlockedOnce && (
+    <button
+      onClick={() => toggleFavorite(suggestion)}
+      className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+      title={isFavorited(suggestion) ? "Remove from favorites" : "Add to favorites"}
+    >
+      <Star 
+        className={isFavorited(suggestion) ? "text-yellow-500 fill-yellow-500" : "text-gray-400"} 
+        size={24} 
+      />
+    </button>
+  )}
 </div>
                   
                   <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
@@ -1112,12 +1160,22 @@ if (error) {
             </button>
           )}
 
-          <button
+<button
             onClick={reset}
             className="w-full bg-white border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-lg hover:bg-gray-50 transition-all"
           >
             Start Over
           </button>
+
+          {hasUnlockedOnce && favorites.length > 0 && (
+            <button
+              onClick={() => setShowFavorites(true)}
+              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Star size={20} className="fill-white" />
+              View My Favorites ({favorites.length})
+            </button>
+          )}
         </div>
         
         <div className="text-center mt-8 space-x-4">
@@ -1128,4 +1186,5 @@ if (error) {
       </div>
     </div>
   );
+}
 }
