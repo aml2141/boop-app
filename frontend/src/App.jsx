@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Baby, Sparkles, ArrowRight, ArrowLeft, Share2, Download, Star } from 'lucide-react';
 import Select from 'react-select';
 import html2canvas from 'html2canvas';
-
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG';
 // Animation styles
 const styles = `
   @keyframes fadeIn {
@@ -396,7 +396,7 @@ while (true) {
       });
 
       const { sessionId } = await response.json();
-      const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+      const stripe = window.Stripe('price_1SFKJyPnhWpLDLv4UFgYtTFJ');
       await stripe.redirectToCheckout({ sessionId });
       
     } catch (error) {
@@ -424,7 +424,7 @@ while (true) {
       });
 
       const { sessionId } = await response.json();
-      const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+      const stripe = window.Stripe('pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG');
       await stripe.redirectToCheckout({ sessionId });
       
     } catch (error) {
