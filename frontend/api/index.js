@@ -124,8 +124,6 @@ let fullContent = '';
 app.post('/api/create-checkout-session', async (req, res) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   
-  try {
-    const { priceId, successUrl, cancelUrl } = req.body;
 try {
   const { priceId, successUrl, cancelUrl } = req.body;
   
@@ -133,7 +131,6 @@ try {
   console.log('Using Stripe key starting with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
 
   const session = await stripe.checkout.sessions.create({
-    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
@@ -157,8 +154,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export for Vercel serverless
+module.exports = app;
 
