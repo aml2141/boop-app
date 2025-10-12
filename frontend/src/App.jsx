@@ -471,7 +471,7 @@ const handleStartOverPayment = async () => {
     });
 
     const { sessionId } = await response.json();
-    const stripe = window.Stripe('pk_test_51SFK1hPnhWpLDLv4qTcXVYZISHc8HHrKfVOL8hvLqnF18yf2ZwMkQioPHjHFEbnUunfdnAtegyrGqZlIFWi4CilO00SN9TObN2');
+    const stripe = window.Stripe(pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG);
     await stripe.redirectToCheckout({ sessionId });
   } catch (error) {
     console.error('Payment error:', error);
