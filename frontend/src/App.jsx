@@ -261,66 +261,26 @@ const generateSuggestions = async () => {
   await new Promise(resolve => setTimeout(resolve, 50));
 
   try {
-    const response = await fetch(`${API_URL}/api/generate-names`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        formData: formData,
-        count: 5
-      })
-    });
+const response = await fetch(`/api/generate-names`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    formData: formData,
+    count: 5
+  })
+});
 
-    if (!response.ok) {
-      throw new Error('Failed to generate names');
-    }
+const data = await response.json();
+const content = data.names;
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullContent = '';
-
-let displayedNames = [];
-
-while (true) {
-  const { done, value } = await reader.read();
-  
-  if (done) {
-    console.log('Stream complete');
-    break;
-  }
-  
-  const chunk = decoder.decode(value);
-  const lines = chunk.split('\n');
-  
-  for (const line of lines) {
-    if (line.startsWith('data: ')) {
-      const data = JSON.parse(line.slice(6));
-      
-      if (data.chunk) {
-        fullContent += data.chunk;
-        
-        // Check if we have the closing bracket (array complete)
-        if (fullContent.includes(']')) {
-          console.log('Complete JSON detected, parsing...');
-          const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
-          if (jsonMatch) {
-            try {
-              const names = JSON.parse(jsonMatch[0]);
-              console.log('Successfully parsed', names.length, 'names');
-              setSuggestions(names);
-              setStep('results');
-              setHasGeneratedOnce(true);
-              setLoading(false);
-              return; // Exit the function completely
-            } catch (parseError) {
-              console.log('Parse error:', parseError);
-            }
-          }
-        }
-      }
-    }
-  }
+const jsonMatch = content.match(/\[[\s\S]*\]/);
+if (jsonMatch) {
+  const names = JSON.parse(jsonMatch[0]);
+  setSuggestions(names);
+  setStep('results');
+  setHasGeneratedOnce(true);
 }
   } catch (error) {
     console.error('Error generating names:', error);
