@@ -375,7 +375,7 @@ if (jsonMatch) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_1SFKJyPnhWpLDLv4UFgYtTFJ',
+          priceId: 'price_1SHFBRPnhWpLDLv4YzyXXxDj',
           successUrl: window.location.href + '?generate=8',
           cancelUrl: window.location.href,
         }),

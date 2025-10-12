@@ -37,7 +37,7 @@ Context:
 - Preferences: ${formData.meaning || 'Not provided'}
 - Avoid: ${formData.avoid || 'None'}
 
-${existingNames && existingNames.length > 0 ? `🚨 MUST AVOID these previously suggested names: ${existingNames.join(', ')}` : ''}
+${existingNames && existingNames.length > 0 ? `🚨 MUST AVOID these previously suggested names: ${Array.isArray(existingNames) ? existingNames.join(', ') : existingNames}` : ''}
 
 For each name provide:
 1. The name
