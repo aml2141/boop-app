@@ -79,7 +79,7 @@ Return ONLY a JSON array:
 
 const message = await anthropic.messages.create({
   model: 'claude-sonnet-4-20250514',
-  max_tokens: 2500,
+  max_tokens: 2000,
   stream: true,  // <-- ADD THIS
   messages: [
     {
