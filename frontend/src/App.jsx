@@ -396,7 +396,7 @@ while (true) {
       });
 
       const { sessionId } = await response.json();
-      const stripe = window.Stripe('price_1SFKJyPnhWpLDLv4UFgYtTFJ');
+      const stripe = window.Stripe('pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG');
       await stripe.redirectToCheckout({ sessionId });
       
     } catch (error) {
@@ -471,7 +471,7 @@ const handleStartOverPayment = async () => {
     });
 
     const { sessionId } = await response.json();
-    const stripe = window.Stripe(pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG);
+    const stripe = window.Stripe('pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG');
     await stripe.redirectToCheckout({ sessionId });
   } catch (error) {
     console.error('Payment error:', error);
