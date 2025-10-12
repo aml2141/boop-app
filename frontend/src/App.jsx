@@ -302,40 +302,22 @@ if (done) {
       
 if (data.chunk) {
   fullContent += data.chunk;
-  console.log('Current content length:', fullContent.length);
   
-  // Log a sample when we have enough content
-  if (fullContent.length > 200 && fullContent.length < 220) {
-    console.log('Content sample:', fullContent);
-  }
-  
-  // Try to extract complete name objects as they arrive
-  const nameMatches = fullContent.match(/\{[^}]*"name"[^}]*"reason"[^}]*"regionalNote"[^}]*\}/g);
-  console.log('Name matches found:', nameMatches ? nameMatches.length : 0);
-  
-  if (nameMatches && nameMatches.length > displayedNames.length) {
-    console.log('Attempting to parse new names...');
-    // Parse new complete names
-    const newNames = nameMatches.slice(displayedNames.length).map(match => {
+  // Check if we have the closing bracket (array complete)
+  if (fullContent.includes(']')) {
+    console.log('Complete JSON detected, parsing...');
+    const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
       try {
-        console.log('Parsing match:', match.substring(0, 50) + '...');
-        return JSON.parse(match);
+        const names = JSON.parse(jsonMatch[0]);
+        console.log('Successfully parsed', names.length, 'names');
+        setSuggestions(names);
+        setStep('results');
+        setHasGeneratedOnce(true);
+        setLoading(false);
+        break; // Exit the loop since we have all names
       } catch (e) {
-        console.log('Parse failed:', e.message);
-        return null;
-      }
-    }).filter(n => n);
-          
-          if (newNames.length > 0) {
-            displayedNames = [...displayedNames, ...newNames];
-            setSuggestions([...displayedNames]);
-            if (displayedNames.length === 1) {
-              // Show results screen as soon as first name arrives
-              setStep('results');
-              setHasGeneratedOnce(true);
-            }
-          }
-        }
+        console.log('Parse error:', e);
       }
     }
   }
