@@ -198,9 +198,7 @@ export default function BabyNameGenerator() {
   const isLastStep = currentFormStep === formSteps.length - 1;
   const canSubmit = formData.userName && formData.location && formData.style;
 
-  const API_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://boop-app-eight.vercel.app'
-    : 'http://localhost:3000';
+  const API_URL = '';  // Empty string = same origin, no CORS
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
