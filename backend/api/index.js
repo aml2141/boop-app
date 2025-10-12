@@ -115,7 +115,13 @@ app.post('/api/create-checkout-session', async (req, res) => {
   
   try {
     const { priceId, successUrl, cancelUrl } = req.body;
+try {
+  const { priceId, successUrl, cancelUrl } = req.body;
+  
+  console.log('Creating checkout session with:', { priceId, successUrl, cancelUrl });
+  console.log('Using Stripe key starting with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
 
+  const session = await stripe.checkout.sessions.create({
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
