@@ -282,7 +282,6 @@ const generateSuggestions = async () => {
     const decoder = new TextDecoder();
     let fullContent = '';
 
-let fullContent = '';
 let displayedNames = [];
 
 while (true) {
