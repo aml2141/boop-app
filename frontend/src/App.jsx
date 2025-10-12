@@ -45,6 +45,8 @@ export default function BabyNameGenerator() {
     babyGender: '',
     location: '',
     parentNames: '',
+    partnerHeritage: '',  
+    partnerParentNames: '',
     siblingNames: '',
     partnerName: '',
     favoriteColor: '',
@@ -93,21 +95,32 @@ export default function BabyNameGenerator() {
     },
     {
       id: 'partnerName',
-      label: "Your partner's name (optional)",
+      label: "Your partner's name",
       placeholder: 'e.g., Alex',
       type: 'text',
       required: false
     },
-    {
-      id: 'parentNames',
-      label: "Your parent's names (optional)",
-      placeholder: 'e.g., Anna and Boris',
-      type: 'text',
-      required: false
-    },
+  {
+  id: 'parentNames',
+  label: "What are your parent's names?",
+  type: 'text',
+  placeholder: 'e.g., Sarah and Michael',
+},
+{
+  id: 'partnerHeritage',
+  label: "What's your partner's heritage or cultural background?",
+  type: 'text',
+  placeholder: 'e.g., Japanese, Mexican, Irish',
+},
+{
+  id: 'partnerParentNames',
+  label: "What are your partner's parent's names?",
+  type: 'text',
+  placeholder: 'e.g., Maria and Carlos',
+},
     {
       id: 'siblingNames',
-      label: 'Do you have other children? If so, what are their names?',
+      label: 'Do you already have children? If so, what are their names?',
       placeholder: 'e.g., Emma, Liam',
       type: 'text',
       required: false

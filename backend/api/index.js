@@ -56,6 +56,8 @@ Context:
 - Location: ${formData.location || 'Not provided'}
 - Heritage: ${formData.heritage || 'Not provided'}
 - Partners: ${formData.parentNames || 'Not provided'}
+- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'}
+- Partner's Parent's Names: ${formData.partnerParentNames || 'Not provided'}
 - Siblings: ${formData.siblingNames || 'Not provided'}
 - Style: ${formData.style || 'Not provided'}
 - Preferences: ${formData.meaning || 'Not provided'}
