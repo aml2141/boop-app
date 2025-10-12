@@ -287,11 +287,10 @@ let displayedNames = [];
 while (true) {
   const { done, value } = await reader.read();
   
-if (done) {
-  console.log('Stream complete, full content:', fullContent);
-  console.log('Full content length:', fullContent.length);
-  break;
-}
+  if (done) {
+    console.log('Stream complete');
+    break;
+  }
   
   const chunk = decoder.decode(value);
   const lines = chunk.split('\n');
@@ -300,24 +299,27 @@ if (done) {
     if (line.startsWith('data: ')) {
       const data = JSON.parse(line.slice(6));
       
-if (data.chunk) {
-  fullContent += data.chunk;
-  
-  // Check if we have the closing bracket (array complete)
-  if (fullContent.includes(']')) {
-    console.log('Complete JSON detected, parsing...');
-    const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      try {
-        const names = JSON.parse(jsonMatch[0]);
-        console.log('Successfully parsed', names.length, 'names');
-        setSuggestions(names);
-        setStep('results');
-        setHasGeneratedOnce(true);
-        setLoading(false);
-        break; // Exit the loop since we have all names
-      } catch (e) {
-        console.log('Parse error:', e);
+      if (data.chunk) {
+        fullContent += data.chunk;
+        
+        // Check if we have the closing bracket (array complete)
+        if (fullContent.includes(']')) {
+          console.log('Complete JSON detected, parsing...');
+          const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            try {
+              const names = JSON.parse(jsonMatch[0]);
+              console.log('Successfully parsed', names.length, 'names');
+              setSuggestions(names);
+              setStep('results');
+              setHasGeneratedOnce(true);
+              setLoading(false);
+              return; // Exit the function completely
+            } catch (parseError) {
+              console.log('Parse error:', parseError);
+            }
+          }
+        }
       }
     }
   }
