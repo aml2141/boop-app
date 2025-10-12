@@ -287,10 +287,11 @@ let displayedNames = [];
 while (true) {
   const { done, value } = await reader.read();
   
-  if (done) {
-    console.log('Stream complete');
-    break;
-  }
+if (done) {
+  console.log('Stream complete, full content:', fullContent);
+  console.log('Full content length:', fullContent.length);
+  break;
+}
   
   const chunk = decoder.decode(value);
   const lines = chunk.split('\n');
