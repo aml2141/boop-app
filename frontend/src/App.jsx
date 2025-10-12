@@ -1188,3 +1188,92 @@ if (step === 'results') {
   );
 }
 }
+
+// FAVORITES SCREEN
+if (showFavorites) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Baby className="text-blue-600" size={48} />
+            <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">⭐ My Favorite Names</h2>
+          <p className="text-gray-600">Your saved baby names ({favorites.length})</p>
+        </div>
+
+        {favorites.length === 0 ? (
+          <div className="text-center py-12">
+            <Star className="mx-auto text-gray-400 mb-4" size={64} />
+            <p className="text-xl text-gray-600">No favorites yet!</p>
+            <p className="text-gray-500 mt-2">Tap the star icon on any name to save it here.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-1 mb-8">
+            {favorites.map((suggestion, index) => (
+              <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
+                <button
+                  onClick={() => toggleFavorite(suggestion)}
+                  className="absolute top-4 right-4 p-2 hover:bg-red-50 rounded-full transition-colors"
+                  title="Remove from favorites"
+                >
+                  <Star className="text-yellow-500 fill-yellow-500" size={24} />
+                </button>
+                
+                <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+                <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+                
+                {(suggestion.rank2024 || suggestion.trend2025) && (
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 mb-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
+                        <span className="text-purple-700 font-semibold">
+                          📊 2024 Rank: {suggestion.rank2024}
+                        </span>
+                      )}
+                      {suggestion.rank2024 === "Not ranked" && (
+                        <span className="text-purple-700 font-semibold">
+                          📊 Unique choice
+                        </span>
+                      )}
+                      {suggestion.trend2025 && (
+                        <span className="text-purple-700">
+                          • {suggestion.trend2025 === "Rising" ? "↗️" : suggestion.trend2025 === "Declining" ? "↘️" : "✨"} {suggestion.trend2025}
+                        </span>
+                      )}
+                    </div>
+                    {suggestion.regionalNote && (
+                      <p className="text-purple-600 text-xs mt-1 italic">{suggestion.regionalNote}</p>
+                    )}
+                  </div>
+                )}
+                
+                <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4">
+                  <p className="text-gray-700 leading-relaxed">
+                    <strong className="text-blue-600">Why this works for you:</strong> {suggestion.reason || suggestion.reasoning}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <button
+          onClick={() => setShowFavorites(false)}
+          className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all"
+        >
+          Back to Results
+        </button>
+
+        <div className="text-center mt-8 space-x-4">
+          <a href="/terms" className="text-blue-600 hover:text-blue-700 text-sm">Terms of Service</a>
+          <span className="text-gray-400">•</span>
+          <a href="/privacy" className="text-blue-600 hover:text-blue-700 text-sm">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  );
+}
