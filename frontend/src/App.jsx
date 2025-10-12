@@ -286,35 +286,28 @@ while (true) {
   const { done, value } = await reader.read();
   
   if (done) {
-    console.log('Stream complete');
+    console.log('Stream ended naturally, parsing content');
+    // Parse whatever we have
+    const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      const names = JSON.parse(jsonMatch[0]);
+      console.log('Parsed names:', names.length);
+      setSuggestions(names);
+      setStep('results');
+      setHasGeneratedOnce(true);
+    }
     break;
   }
   
   const chunk = decoder.decode(value);
-  console.log('Received chunk:', chunk);
   const lines = chunk.split('\n');
   
   for (const line of lines) {
     if (line.startsWith('data: ')) {
-      console.log('Processing line:', line);
       const data = JSON.parse(line.slice(6));
       
       if (data.chunk) {
         fullContent += data.chunk;
-        console.log('Added chunk, total length:', fullContent.length);
-      }
-      
-      if (data.done) {
-        console.log('Received done signal, parsing:', fullContent);
-        // Parse the complete JSON
-        const jsonMatch = fullContent.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
-          const names = JSON.parse(jsonMatch[0]);
-          console.log('Parsed names:', names.length);
-          setSuggestions(names);
-          setStep('results');
-          setHasGeneratedOnce(true);
-        }
       }
     }
   }
