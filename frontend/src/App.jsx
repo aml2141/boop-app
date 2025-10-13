@@ -43,6 +43,14 @@ export default function BabyNameGenerator() {
   const saved = localStorage.getItem('boopFavorites');
   return saved ? JSON.parse(saved) : [];
 });
+// Admin bypass
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('admin') === 'boop2025') {
+    setHasUnlockedOnce(true);
+    console.log('Admin mode activated');
+  }
+}, []);
 const [showFavorites, setShowFavorites] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
