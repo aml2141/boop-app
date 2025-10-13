@@ -1167,15 +1167,11 @@ if (step === 'results') {
             Start Over
           </button>
 
-          {hasUnlockedOnce && favorites.length > 0 && (
-            <button
-              onClick={() => setShowFavorites(true)}
-              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              <Star size={20} className="fill-white" />
-              View My Favorites ({favorites.length})
-            </button>
-          )}
+        onClick={() => {
+  console.log('Favorites button clicked, current showFavorites:', showFavorites);
+  setShowFavorites(true);
+  console.log('Set showFavorites to true');
+}}
         </div>
         
         <div className="text-center mt-8 space-x-4">
