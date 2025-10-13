@@ -1183,7 +1183,6 @@ if (step === 'results') {
     </div>
   );
 }
-}
 
 // FAVORITES SCREEN
 if (showFavorites) {
@@ -1272,4 +1271,5 @@ if (showFavorites) {
       </div>
     </div>
   );
+}
 }
