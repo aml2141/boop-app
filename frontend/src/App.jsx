@@ -2,41 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Baby, Sparkles, ArrowRight, ArrowLeft, Share2, Download, Star } from 'lucide-react';
 import Select from 'react-select';
 import html2canvas from 'html2canvas';
+
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG';
-// Animation styles
-const styles = `
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-out;
-  }
-`;
 
-export default function BabyNameGenerator() {
-  // Check maintenance mode first
-  if (MAINTENANCE_MODE) {
-    return <MaintenanceScreen />;
-  }
-
-  // ... rest of the existing code (all the useState, etc.)
-  // Inject animation styles
-  if (typeof document !== 'undefined') {
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    if (!document.head.querySelector('[data-boop-styles]')) {
-      styleSheet.setAttribute('data-boop-styles', 'true');
-      document.head.appendChild(styleSheet);
-    }
-  }
-// Maintenance mode check
+// Maintenance mode check - MUST BE BEFORE THE COMPONENT
 const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
 const MaintenanceScreen = () => (
@@ -62,6 +31,42 @@ const MaintenanceScreen = () => (
     </div>
   </div>
 );
+
+// Animation styles
+const styles = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+`;
+
+export default function BabyNameGenerator() {
+  // Check maintenance mode first
+  if (MAINTENANCE_MODE) {
+    return <MaintenanceScreen />;
+  }
+
+  // Inject animation styles
+  if (typeof document !== 'undefined') {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = styles;
+    if (!document.head.querySelector('[data-boop-styles]')) {
+      styleSheet.setAttribute('data-boop-styles', 'true');
+      document.head.appendChild(styleSheet);
+    }
+  }
+
+  // STATE DECLARATIONS START HERE
+
   const [step, setStep] = useState('form');
   const [loading, setLoading] = useState(false);
   const [currentFormStep, setCurrentFormStep] = useState(0);
@@ -70,6 +75,8 @@ const MaintenanceScreen = () => (
   const [hasUnlockedOnce, setHasUnlockedOnce] = useState(false);
   const [showPopularity, setShowPopularity] = useState(false);
   const [startOverCount, setStartOverCount] = useState(0);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [generationStatus, setGenerationStatus] = useState('');
   const [favorites, setFavorites] = useState(() => {
   const saved = localStorage.getItem('boopFavorites');
   return saved ? JSON.parse(saved) : [];
@@ -302,6 +309,24 @@ const generateSuggestions = async () => {
 
   setStep('loading');
   setLoading(true);
+  setGenerationProgress(0);
+setGenerationStatus('Analyzing your preferences...');
+
+// Simulate progress
+const progressInterval = setInterval(() => {
+  setGenerationProgress(prev => {
+    if (prev >= 90) {
+      clearInterval(progressInterval);
+      return 90;
+    }
+    return prev + 10;
+  });
+}, 800);
+
+// Update status messages
+setTimeout(() => setGenerationStatus('Searching our name database...'), 2000);
+setTimeout(() => setGenerationStatus('Finding perfect matches...'), 5000);
+setTimeout(() => setGenerationStatus('Almost there...'), 8000);
   await new Promise(resolve => setTimeout(resolve, 50));
 
   try {
@@ -334,11 +359,30 @@ if (jsonMatch) {
     });
   } finally {
     setLoading(false);
+    clearInterval(progressInterval);
+setGenerationProgress(100);
+setGenerationStatus('Complete!');
   }
 };
 
   const generateAdditionalNames = async (count) => {
     setLoading(true);
+    setLoading(true);
+setGenerationProgress(0);
+setGenerationStatus('Generating 5 more amazing names...');
+
+const progressInterval = setInterval(() => {
+  setGenerationProgress(prev => {
+    if (prev >= 90) {
+      clearInterval(progressInterval);
+      return 90;
+    }
+    return prev + 10;
+  });
+}, 800);
+
+setTimeout(() => setGenerationStatus('Finding unique suggestions...'), 2000);
+setTimeout(() => setGenerationStatus('Almost ready...'), 5000);
     
     try {
       const existingNames = suggestions.map(s => s.name).join(', ');
@@ -375,6 +419,9 @@ if (jsonMatch) {
   });
 } finally {
   setLoading(false);
+  clearInterval(progressInterval);
+setGenerationProgress(100);
+setGenerationStatus('Complete!');
 }
   };
 
@@ -956,16 +1003,10 @@ if (isMobile) {
   }
 
 // LOADING SCREEN
-if (loading || step === 'loading') {
+if (loading) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
-      <div className="text-center">
-        <div className="inline-block animate-bounce mb-4">
-          <Baby className="text-blue-600" size={64} />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Crafting Your Perfect Names...</h2>
-        <p className="text-gray-600">Analyzing your family context and cultural background</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center px-6">
+      <GenerationProgress progress={generationProgress} status={generationStatus} />
     </div>
   );
 }
@@ -1311,4 +1352,4 @@ if (showFavorites) {
     </div>
   );
 }
-}/* force deploy */
+}
