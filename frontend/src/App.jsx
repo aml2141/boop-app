@@ -21,6 +21,12 @@ const styles = `
 `;
 
 export default function BabyNameGenerator() {
+  // Check maintenance mode first
+  if (MAINTENANCE_MODE) {
+    return <MaintenanceScreen />;
+  }
+
+  // ... rest of the existing code (all the useState, etc.)
   // Inject animation styles
   if (typeof document !== 'undefined') {
     const styleSheet = document.createElement("style");
@@ -30,7 +36,32 @@ export default function BabyNameGenerator() {
       document.head.appendChild(styleSheet);
     }
   }
+// Maintenance mode check
+const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
+const MaintenanceScreen = () => (
+  <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center px-6">
+    <div className="max-w-md text-center">
+      <Baby className="mx-auto text-blue-600 mb-6" size={80} />
+      <h1 className="text-5xl font-bold text-gray-800 mb-4">Boop</h1>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">🛠️ Under Maintenance</h2>
+      <p className="text-gray-600 mb-6">
+        We're making some improvements to bring you an even better baby name experience!
+      </p>
+      <p className="text-gray-500 text-sm">
+        We'll be back shortly. Thank you for your patience! 💙
+      </p>
+      <div className="mt-8">
+        <a 
+          href="mailto:support@helloboop.com" 
+          className="text-blue-600 hover:text-blue-700 text-sm"
+        >
+          Contact Support
+        </a>
+      </div>
+    </div>
+  </div>
+);
   const [step, setStep] = useState('form');
   const [loading, setLoading] = useState(false);
   const [currentFormStep, setCurrentFormStep] = useState(0);
