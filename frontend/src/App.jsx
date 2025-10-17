@@ -262,7 +262,13 @@ const [showFavorites, setShowFavorites] = useState(false);
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
     }
-    
+      if (params.get('unlock') === 'initial' && suggestions.length > 0) {
+      setHasUnlockedInitial(true);
+      setHasUnlockedOnce(true);
+      sessionStorage.removeItem('boopFormData');
+      sessionStorage.removeItem('boopSuggestions');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
     if (params.get('generate') === '8' && suggestions.length > 0) {
       generateAdditionalNames(5);
       sessionStorage.removeItem('boopFormData');
@@ -440,7 +446,7 @@ setGenerationStatus('Complete!');
         },
         body: JSON.stringify({
           priceId: 'price_1SHFBRPnhWpLDLv4YzyXXxDj',
-          successUrl: window.location.href + '?generate=5',
+          successUrl: window.location.href + '?unlock=initial',
           cancelUrl: window.location.href,
         }),
       });
@@ -467,7 +473,7 @@ setGenerationStatus('Complete!');
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_1SHFBRPnhWpLDLv4YzyXXxDj',
+          priceId: 'price_1SJHbmPnhWpLDLv4JYn8jsDG',
           successUrl: window.location.href + '?generate=8',
           cancelUrl: window.location.href,
         }),
@@ -1266,7 +1272,7 @@ if (step === 'results') {
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
             >
               <Sparkles size={20} />
-              Get 5 More Names - $0.99
+              Get 5 More Names - $1.99
             </button>
           )}
 
