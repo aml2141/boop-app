@@ -372,8 +372,7 @@ setGenerationStatus('Complete!');
   }
 };
 
-  const generateAdditionalNames = async (count) => {
-    setLoading(true);
+ const generateAdditionalNames = async (count) => {
     setLoading(true);
 setGenerationProgress(0);
 setGenerationStatus('Generating 5 more amazing names...');
@@ -1088,7 +1087,7 @@ if (step === 'results') {
 
         <div className="grid gap-6 md:grid-cols-1 mb-8">
 {freeNames.map((suggestion, index) => {
-          const isLocked = !hasUnlockedInitial && index >= 2;
+          const isLocked = !hasUnlockedInitial && index >= 2 && index <= 4;
           
           return (
             <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
