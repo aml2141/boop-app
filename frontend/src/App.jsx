@@ -270,6 +270,7 @@ const [showFavorites, setShowFavorites] = useState(false);
       window.history.replaceState({}, '', window.location.pathname);
     }
     if (params.get('generate') === '8' && suggestions.length > 0) {
+       setHasUnlockedInitial(true); //
       generateAdditionalNames(5);
       sessionStorage.removeItem('boopFormData');
       sessionStorage.removeItem('boopSuggestions');
