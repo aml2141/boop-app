@@ -76,6 +76,7 @@ export default function BabyNameGenerator() {
   const [showPopularity, setShowPopularity] = useState(false);
   const [startOverCount, setStartOverCount] = useState(0);
   const [generationProgress, setGenerationProgress] = useState(0);
+  const [hasUnlockedInitial, setHasUnlockedInitial] = useState(false);
   const [generationStatus, setGenerationStatus] = useState('');
   const [favorites, setFavorites] = useState(() => {
   const saved = localStorage.getItem('boopFavorites');
@@ -1080,73 +1081,99 @@ if (step === 'results') {
         </div>
 
         <div className="grid gap-6 md:grid-cols-1 mb-8">
-          {freeNames.map((suggestion, index) => (
+{freeNames.map((suggestion, index) => {
+          const isLocked = !hasUnlockedInitial && index >= 2;
+          
+          return (
             <div key={index} className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow relative">
- <div className="absolute top-4 right-4 flex gap-2">
-  <button
-    onClick={() => shareName(suggestion)}
-    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
-    title="Share this name"
-  >
-    <Share2 className="text-blue-500" size={24} />
-  </button>
-  <button
-    onClick={() => saveNameAsImage(suggestion, index)}
-    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
-    title="Save as image"
-  >
-    <Download className="text-blue-500" size={24} />
-  </button>
-  {hasUnlockedOnce && (
-    <button
-      onClick={() => toggleFavorite(suggestion)}
-      className="p-2 hover:bg-blue-50 rounded-full transition-colors"
-      title={isFavorited(suggestion) ? "Remove from favorites" : "Add to favorites"}
-    >
-      <Star 
-        className={isFavorited(suggestion) ? "text-yellow-500 fill-yellow-500" : "text-gray-400"} 
-        size={24} 
-      />
-    </button>
-  )}
-</div>
+              {!isLocked && (
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <button
+                    onClick={() => shareName(suggestion)}
+                    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+                    title="Share this name"
+                  >
+                    <Share2 className="text-blue-500" size={24} />
+                  </button>
+                  <button
+                    onClick={() => saveNameAsImage(suggestion, index)}
+                    className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+                    title="Save as image"
+                  >
+                    <Download className="text-blue-500" size={24} />
+                  </button>
+                  {hasUnlockedOnce && (
+                    <button
+                      onClick={() => toggleFavorite(suggestion)}
+                      className="p-2 hover:bg-blue-50 rounded-full transition-colors"
+                      title={isFavorited(suggestion) ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      <Star 
+                        className={isFavorited(suggestion) ? "text-yellow-500 fill-yellow-500" : "text-gray-400"} 
+                        size={24} 
+                      />
+                    </button>
+                  )}
+                </div>
+              )}
               
               <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
-              <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
-              {(suggestion.rank2024 || suggestion.trend2025) && (
-  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 mb-3">
-    <div className="flex items-center gap-2 text-sm">
-      {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
-        <span className="text-purple-700 font-semibold">
-          📊 2024 Rank: {suggestion.rank2024}
-        </span>
-      )}
-      {suggestion.rank2024 === "Not ranked" && (
-        <span className="text-purple-700 font-semibold">
-          📊 Unique choice
-        </span>
-      )}
-      {suggestion.trend2025 && (
-        <span className="text-purple-700">
-          • {suggestion.trend2025 === "Rising" ? "↗️" : suggestion.trend2025 === "Declining" ? "↘️" : "✨"} {suggestion.trend2025}
-        </span>
-      )}
-    </div>
-    {suggestion.regionalNote && (
-      <p className="text-purple-600 text-xs mt-1 italic">{suggestion.regionalNote}</p>
-    )}
-  </div>
-)}
-              <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
               
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
-                <p className="text-gray-700 leading-relaxed">
-                  <strong className="text-blue-600">Why this works for you:</strong> {suggestion.reason || suggestion.reasoning}
-                </p>
-              </div>
+              {isLocked ? (
+                <div className="relative">
+                  <div className="blur-sm pointer-events-none select-none">
+                    <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 Hidden</p>
+                    <p className="text-gray-600 italic mb-4 text-lg">"Unlock to see meaning"</p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                      <p className="font-bold text-lg flex items-center gap-2">
+                        🔒 Unlock for $0.99
+                      </p>
+                      <p className="text-sm mt-1">See meaning, popularity & why this works for you</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 {suggestion.pronunciation}</p>
+                  {(suggestion.rank2024 || suggestion.trend2025) && (
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 mb-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        {suggestion.rank2024 && suggestion.rank2024 !== "Not ranked" && (
+                          <span className="text-purple-700 font-semibold">
+                            📊 2024 Rank: {suggestion.rank2024}
+                          </span>
+                        )}
+                        {suggestion.rank2024 === "Not ranked" && (
+                          <span className="text-purple-700 font-semibold">
+                            📊 Unique choice
+                          </span>
+                        )}
+                        {suggestion.trend2025 && (
+                          <span className="text-purple-700">
+                            • {suggestion.trend2025 === "Rising" ? "↗️" : suggestion.trend2025 === "Declining" ? "↘️" : "✨"} {suggestion.trend2025}
+                          </span>
+                        )}
+                      </div>
+                      {suggestion.regionalNote && (
+                        <p className="text-purple-600 text-xs mt-1 italic">{suggestion.regionalNote}</p>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                  
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      <strong className="text-blue-600">Why this works for you:</strong> {suggestion.reason || suggestion.reasoning}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
         {premiumNames.length > 0 && (
           <div className="mb-8">
