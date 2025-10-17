@@ -1255,8 +1255,8 @@ if (step === 'results') {
           </div>
         )}
 
-        <div className="flex flex-col gap-4">
-          {!hasUnlockedOnce && (
+  <div className="flex flex-col gap-4">
+          {!hasUnlockedInitial && (
             <button
               onClick={handleGenerateMore}
               className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
@@ -1266,7 +1266,7 @@ if (step === 'results') {
             </button>
           )}
 
-          {hasUnlockedOnce && suggestions.length < 13 && (
+          {hasUnlockedInitial && (
             <button
               onClick={handleGenerateEightMore}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
