@@ -1256,7 +1256,7 @@ if (step === 'results') {
               className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
             >
               <Sparkles size={20} />
-              Unlock 5 More Names - $0.99
+              Unlock Additional Names - $0.99
             </button>
           )}
 
@@ -1277,11 +1277,6 @@ if (step === 'results') {
             Start Over
           </button>
 
-        onClick={() => {
-  console.log('Favorites button clicked, current showFavorites:', showFavorites);
-  setShowFavorites(true);
-  console.log('Set showFavorites to true');
-}}
         </div>
         
         <div className="text-center mt-8 space-x-4">
