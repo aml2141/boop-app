@@ -85,7 +85,7 @@ export default function BabyNameGenerator() {
 
 // GenerationProgress component
   const GenerationProgress = ({ progress, status }) => (
-    <div className="w-full max-w-md mx-auto space-y-4">
+    <div className="w-full max-w-md mx-auto space-y-4 min-h-[200px] flex flex-col justify-center">
       <div className="text-center">
         <Baby className="mx-auto text-blue-600 animate-bounce mb-4" size={64} />
         <p className="text-xl font-semibold text-gray-800 mb-2">{status}</p>
