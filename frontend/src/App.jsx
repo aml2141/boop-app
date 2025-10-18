@@ -99,7 +99,7 @@ export default function BabyNameGenerator() {
       </div>
     </div>
   );
-  
+
 // Admin bypass
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
@@ -1029,15 +1029,12 @@ if (isMobile) {
 
 // LOADING SCREEN
 if (loading) {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center">
-      <div className="text-center">
-        <Baby className="mx-auto text-blue-600 animate-bounce mb-4" size={64} />
-        <p className="text-2xl font-bold text-gray-800">Generating your perfect baby names...</p>
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center px-6">
+        <GenerationProgress progress={generationProgress} status={generationStatus} />
       </div>
-    </div>
-  );
-}
+    );
+  }
 // ERROR MODAL
 if (error) {
   return (
