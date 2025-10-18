@@ -82,6 +82,24 @@ export default function BabyNameGenerator() {
   const saved = localStorage.getItem('boopFavorites');
   return saved ? JSON.parse(saved) : [];
 });
+
+// GenerationProgress component
+  const GenerationProgress = ({ progress, status }) => (
+    <div className="w-full max-w-md mx-auto space-y-4">
+      <div className="text-center">
+        <Baby className="mx-auto text-blue-600 animate-bounce mb-4" size={64} />
+        <p className="text-xl font-semibold text-gray-800 mb-2">{status}</p>
+        <p className="text-sm text-gray-600">{progress}% complete</p>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div 
+          className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+  
 // Admin bypass
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
