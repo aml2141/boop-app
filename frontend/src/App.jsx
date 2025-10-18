@@ -352,7 +352,7 @@ const progressInterval = setInterval(() => {
 // Update status messages
 setTimeout(() => setGenerationStatus('Searching our name database...'), 2000);
 setTimeout(() => setGenerationStatus('Finding perfect matches...'), 5000);
-setTimeout(() => setGenerationStatus('Almost there...'), 8000);
+setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
   await new Promise(resolve => setTimeout(resolve, 50));
 
   try {
@@ -407,7 +407,7 @@ const progressInterval = setInterval(() => {
 }, 800);
 
 setTimeout(() => setGenerationStatus('Finding unique suggestions...'), 2000);
-setTimeout(() => setGenerationStatus('Almost ready...'), 5000);
+setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
     
     try {
       const existingNames = suggestions.map(s => s.name).join(', ');
