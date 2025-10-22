@@ -1376,29 +1376,35 @@ if (step === 'results') {
             </div>
           ))}
 
-{/* Lock banner for names 3-5 OR show them if unlocked */}
+{/* Names 3-5 with shared overlay */}
           {!hasUnlockedInitial ? (
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-12 text-center text-white relative">
-              <div className="mb-6">
-                <div className="text-6xl mb-4">🔒</div>
-                <h3 className="text-3xl font-bold mb-2">3 More Names Waiting</h3>
-                <div className="flex justify-center gap-6 mb-4 text-2xl font-bold">
-                  <span>{freeNames[2]?.name}</span>
-                  <span>•</span>
-                  <span>{freeNames[3]?.name}</span>
-                  <span>•</span>
-                  <span>{freeNames[4]?.name}</span>
+            <div className="relative">
+              {/* The 3 blurred cards */}
+              {freeNames.slice(2, 5).map((suggestion, index) => (
+                <div key={index + 2} className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                  <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+                  <div className="filter blur-md">
+                    <p className="text-blue-600 mb-2">🔊 Hidden</p>
+                    <p className="text-gray-600 mb-4">Locked...</p>
+                  </div>
                 </div>
-                <p className="text-blue-100 text-lg mb-8">Complete meanings, popularity rankings, and personalized insights locked</p>
+              ))}
+              
+              {/* Single overlay covering all 3 */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 rounded-2xl flex items-center justify-center p-12">
+                <div className="text-center text-white">
+                  <div className="text-6xl mb-4">🔒</div>
+                  <h3 className="text-3xl font-bold mb-4">3 More Names Locked</h3>
+                  <p className="text-blue-100 text-lg mb-8 max-w-md">Unlock to see complete meanings, popularity rankings, and personalized insights</p>
+                  <button
+                    onClick={handleGenerateMore}
+                    className="bg-white text-blue-600 font-bold py-5 px-10 rounded-xl hover:bg-blue-50 transition-all text-2xl shadow-xl flex items-center justify-center gap-3 mx-auto"
+                  >
+                    <Sparkles size={28} />
+                    Unlock All 3 for $0.99
+                  </button>
+                </div>
               </div>
-
-              <button
-                onClick={handleGenerateMore}
-                className="bg-white text-blue-600 font-bold py-5 px-10 rounded-xl hover:bg-blue-50 transition-all text-2xl shadow-xl flex items-center justify-center gap-3 mx-auto"
-              >
-                <Sparkles size={28} />
-                Unlock All 3 for $0.99
-              </button>
             </div>
           ) : (
             <>
