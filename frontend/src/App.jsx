@@ -1376,34 +1376,35 @@ if (step === 'results') {
             </div>
           ))}
 
-        {/* Lock banner for names 3-5 OR show them if unlocked */}
+{/* Lock banner for names 3-5 OR show them if unlocked */}
           {!hasUnlockedInitial ? (
             <>
+              {/* Show 3 locked preview cards */}
               {freeNames.slice(2, 5).map((suggestion, index) => (
-                <div key={index + 2} className="bg-white rounded-2xl shadow-xl p-8 relative overflow-hidden">
-                  {/* Blur overlay */}
-                  <div className="filter blur-sm pointer-events-none">
-                    <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
-                    <p className="text-gray-600 mb-4">Hidden details...</p>
-                  </div>
-                  
-                  {/* Lock overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 flex flex-col items-center justify-center text-white p-8">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">🔒</div>
-                      <h4 className="text-2xl font-bold mb-2">{suggestion.name}</h4>
-                      <p className="text-blue-100 mb-6">Meaning, popularity & personalized insights locked</p>
-                      <button
-                        onClick={handleGenerateMore}
-                        className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-lg shadow-lg flex items-center justify-center gap-2 mx-auto"
-                      >
-                        <Sparkles size={20} />
-                        Unlock All 3 for $0.99
-                      </button>
+                <div key={index + 2} className="bg-white rounded-2xl shadow-xl p-8 relative">
+                  <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+                  <div className="filter blur-md">
+                    <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 Hidden pronunciation</p>
+                    <p className="text-gray-600 italic mb-4 text-lg">"Meaning locked..."</p>
+                    <div className="bg-gray-100 rounded-xl p-4 mb-4">
+                      <p className="text-gray-400">Details hidden until unlocked</p>
                     </div>
                   </div>
                 </div>
               ))}
+              
+              {/* Single unlock banner */}
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-center text-white -mt-4">
+                <h3 className="text-2xl font-bold mb-2">🔒 Unlock All 3 Names Above</h3>
+                <p className="text-blue-100 mb-6">See full meanings, popularity rankings, and personalized insights</p>
+                <button
+                  onClick={handleGenerateMore}
+                  className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-xl shadow-lg flex items-center justify-center gap-2 mx-auto"
+                >
+                  <Sparkles size={24} />
+                  Unlock All 3 for $0.99
+                </button>
+              </div>
             </>
           ) : (
             <>
