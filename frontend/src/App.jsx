@@ -106,6 +106,7 @@ useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   if (params.get('admin') === 'boop2025') {
     setHasUnlockedOnce(true);
+    setHasUnlockedInitial(true); // Add this line
     console.log('Admin mode activated');
   }
 }, []);
