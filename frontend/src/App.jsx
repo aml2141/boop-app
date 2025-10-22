@@ -1378,34 +1378,28 @@ if (step === 'results') {
 
 {/* Lock banner for names 3-5 OR show them if unlocked */}
           {!hasUnlockedInitial ? (
-            <>
-              {/* Show 3 locked preview cards */}
-              {freeNames.slice(2, 5).map((suggestion, index) => (
-                <div key={index + 2} className="bg-white rounded-2xl shadow-xl p-8 relative">
-                  <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
-                  <div className="filter blur-md">
-                    <p className="text-blue-600 font-semibold mb-2 text-lg">🔊 Hidden pronunciation</p>
-                    <p className="text-gray-600 italic mb-4 text-lg">"Meaning locked..."</p>
-                    <div className="bg-gray-100 rounded-xl p-4 mb-4">
-                      <p className="text-gray-400">Details hidden until unlocked</p>
-                    </div>
-                  </div>
+            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-12 text-center text-white relative">
+              <div className="mb-6">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-3xl font-bold mb-2">3 More Names Waiting</h3>
+                <div className="flex justify-center gap-6 mb-4 text-2xl font-bold">
+                  <span>{freeNames[2]?.name}</span>
+                  <span>•</span>
+                  <span>{freeNames[3]?.name}</span>
+                  <span>•</span>
+                  <span>{freeNames[4]?.name}</span>
                 </div>
-              ))}
-              
-              {/* Single unlock banner */}
-              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-8 text-center text-white -mt-4">
-                <h3 className="text-2xl font-bold mb-2">🔒 Unlock All 3 Names Above</h3>
-                <p className="text-blue-100 mb-6">See full meanings, popularity rankings, and personalized insights</p>
-                <button
-                  onClick={handleGenerateMore}
-                  className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-xl shadow-lg flex items-center justify-center gap-2 mx-auto"
-                >
-                  <Sparkles size={24} />
-                  Unlock All 3 for $0.99
-                </button>
+                <p className="text-blue-100 text-lg mb-8">Complete meanings, popularity rankings, and personalized insights locked</p>
               </div>
-            </>
+
+              <button
+                onClick={handleGenerateMore}
+                className="bg-white text-blue-600 font-bold py-5 px-10 rounded-xl hover:bg-blue-50 transition-all text-2xl shadow-xl flex items-center justify-center gap-3 mx-auto"
+              >
+                <Sparkles size={28} />
+                Unlock All 3 for $0.99
+              </button>
+            </div>
           ) : (
             <>
               {freeNames.slice(2, 5).map((suggestion, index) => (
