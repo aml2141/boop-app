@@ -1391,15 +1391,15 @@ if (step === 'results') {
               ))}
               
               {/* Single overlay covering all 3 */}
-              <div className="absolute left-4 right-4 md:left-48 md:right-48 top-16 bottom-16 md:top-20 md:bottom-20 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 rounded-2xl flex items-center justify-center p-6 shadow-2xl">
-                <div className="text-center text-white">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <h3 className="text-3xl font-bold mb-4">3 More Names Locked</h3>
-                  <p className="text-blue-100 text-lg mb-8 max-w-md">Unlock to see complete meanings, popularity rankings, and personalized insights</p>
-                  <button
-                    onClick={handleGenerateMore}
-                    className="bg-white text-blue-600 font-bold py-5 px-10 rounded-xl hover:bg-blue-50 transition-all text-2xl shadow-xl flex items-center justify-center gap-3 mx-auto"
-                  >
+             <div className="absolute left-4 right-4 md:left-48 md:right-48 top-24 bottom-24 md:top-20 md:bottom-20 bg-gradient-to-br from-blue-500/60 md:from-blue-500/95 to-cyan-500/60 md:to-cyan-500/95 rounded-2xl flex items-center justify-center p-4 md:p-6 shadow-2xl">
+  <div className="text-center text-white">
+    <div className="text-4xl md:text-6xl mb-2 md:mb-4">🔒</div>
+    <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-4">3 More Names Locked</h3>
+    <p className="text-blue-100 text-sm md:text-lg mb-4 md:mb-8 max-w-md hidden md:block">Unlock to see complete meanings, popularity rankings, and personalized insights</p>
+    <button
+      onClick={handleGenerateMore}
+      className="bg-white md:bg-white text-blue-600 border-2 border-white font-bold py-3 md:py-5 px-6 md:px-10 rounded-xl hover:bg-blue-50 transition-all text-lg md:text-2xl shadow-xl flex items-center justify-center gap-2 md:gap-3 mx-auto"
+    >
                     <Sparkles size={28} />
                     Unlock All 3 for $0.99
                   </button>
