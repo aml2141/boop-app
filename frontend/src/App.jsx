@@ -1123,7 +1123,7 @@ if (step === 'results') {
                   >
                     <Download className="text-blue-500" size={24} />
                   </button>
-                  {hasUnlockedOnce && (
+                  {hasUnlockedInitial && (
                     <button
                       onClick={() => toggleFavorite(suggestion)}
                       className="p-2 hover:bg-blue-50 rounded-full transition-colors"
