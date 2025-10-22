@@ -1395,7 +1395,7 @@ if (step === 'results') {
   <div className="text-center text-white">
     <div className="text-4xl md:text-6xl mb-2 md:mb-4">🔒</div>
     <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-4">3 More Names Locked</h3>
-<p className="text-blue-100 text-xs md:text-base mb-3 md:mb-6 max-w-md px-2">Unlock to see complete meanings, popularity rankings, and personalized insights</p>
+<p className="text-blue-100 text-sm md:text-lg font-bold mb-2 md:mb-4 max-w-md px-2">Unlock to see complete meanings, popularity rankings, and personalized insights</p>
     <button
       onClick={handleGenerateMore}
       className="bg-white md:bg-white text-blue-600 border-2 border-white font-bold py-3 md:py-5 px-6 md:px-10 rounded-xl hover:bg-blue-50 transition-all text-lg md:text-2xl shadow-xl flex items-center justify-center gap-2 md:gap-3 mx-auto"
