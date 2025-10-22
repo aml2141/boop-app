@@ -1297,6 +1297,15 @@ if (step === 'results') {
           >
             Start Over
           </button>
+{hasUnlockedInitial && favorites.length > 0 && (
+            <button
+              onClick={() => setShowFavorites(true)}
+              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Star size={20} className="fill-white" />
+              View My Favorites ({favorites.length})
+            </button>
+          )}
 
         </div>
         
