@@ -59,35 +59,43 @@ app.post('/api/generate-names', async (req, res) => {
     console.log('Generating', nameCount, 'names');
     console.log('Existing names to avoid:', existingNames || 'none');
 
-    let prompt = `You are a baby name expert. Generate ${nameCount} diverse baby name suggestions.
+   let prompt = `You are an expert baby name consultant specializing in personalized, meaningful suggestions.
 
-Context:
-- Name: ${formData.userName || 'Not provided'}
-- Gender: ${formData.babyGender || 'Any'}
-- Location: ${formData.location || 'Not provided'}
-- Heritage: ${formData.heritage || 'Not provided'}
-- Partners: ${formData.parentNames || 'Not provided'}
-- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'}
-- Partner's Parent's Names: ${formData.partnerParentNames || 'Not provided'}
-- Siblings: ${formData.siblingNames || 'Not provided'}
-- Style: ${formData.style || 'Not provided'}
-- Preferences: ${formData.meaning || 'Not provided'}
-- Avoid: ${formData.avoid || 'None'}
+CRITICAL INSTRUCTIONS:
+1. FIRST AND FOREMOST: Honor the user's stated style preferences exactly (${formData.style || 'any style'})
+2. Generate ${nameCount} DIVERSE names - avoid suggesting the same names to different families
+3. HEAVILY personalize based on their unique context (heritage, siblings, location)
+4. Avoid generic suggestions - if suggesting a popular name, you must explain why it's uniquely suited to THIS specific family
+5. Increase creativity and variety - think beyond the obvious choices
 
-${existingNames && existingNames.length > 0 ? `🚨 MUST AVOID these previously suggested names: ${existingNames.join(', ')}` : ''}
+User Context:
+- Parent Name: ${formData.userName || 'Not provided'}
+- Preferred Gender: ${formData.babyGender || 'Any'}
+- Location: ${formData.location || 'Not provided'} (consider regional preferences and cultural context)
+- Heritage: ${formData.heritage || 'Not provided'} (weigh this HEAVILY)
+- Partner Names: ${formData.parentNames || 'Not provided'}
+- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'} (blend both heritages meaningfully)
+- Partner's Parent Names: ${formData.partnerParentNames || 'Not provided'}
+- Sibling Names: ${formData.siblingNames || 'Not provided'} (ensure the name fits the sibling set's style and flow)
+- Style Preference: ${formData.style || 'Not provided'} ⚠️ THIS IS CRITICAL - match this style exactly
+- Meaning/Preferences: ${formData.preferences || 'Not provided'}
+- Names to Avoid: ${formData.avoid || 'None'}
 
-For each name provide:
-1. The name
-2. Pronunciation guide (phonetic)
-3. Meaning and origin
-4. Why it works for this family (2-3 sentences referencing their context)
-5. 2024 SSA rank (use real data if known, or "Not ranked")
-6. 2025 trend: "Rising", "Timeless", or "Declining"
-7. Regional note if relevant to their location
+${existingNames && existingNames.length > 0 ? `
+🚨 MANDATORY: Do NOT suggest any of these previously generated names: ${existingNames}
+Generate completely different options.` : ''}
 
-Return ONLY a JSON array:
-[{"name":"Name","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
+For each name, provide:
+1. name: The suggested name
+2. pronunciation: Clear phonetic guide (e.g., "ah-MEE-lee-ah")
+3. meaning: Origin and meaning (1-2 sentences)
+4. reason: Why this name specifically works for THIS family (2-3 detailed sentences that reference their heritage, sibling names, location, or stated preferences)
+5. rank2024: 2024 SSA popularity rank (use real data if you know it, or "Not ranked" for rare names)
+6. trend2025: One of: "Rising", "Timeless", "Declining", or "Emerging"
+7. regionalNote: (optional) If relevant to their location/heritage
 
+Return ONLY valid JSON array with no additional text:
+[{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
 const message = await anthropic.messages.create({
   model: 'claude-sonnet-4-20250514',
   max_tokens: 2000,
