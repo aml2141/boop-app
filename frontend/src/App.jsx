@@ -1376,28 +1376,35 @@ if (step === 'results') {
             </div>
           ))}
 
-          {/* Lock banner for names 3-5 OR show them if unlocked */}
+        {/* Lock banner for names 3-5 OR show them if unlocked */}
           {!hasUnlockedInitial ? (
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-12 text-center text-white">
-              <div className="mb-6">
-                <h3 className="text-3xl font-bold mb-2">🔒 3 More Names Waiting</h3>
-                <p className="text-blue-100 text-lg">Unlock to see meanings, popularity, and personalized reasons</p>
-              </div>
-              
-              <div className="flex gap-4 justify-center mb-6 text-xl font-semibold">
-                <span className="bg-white/20 px-4 py-2 rounded-lg">{freeNames[2]?.name}</span>
-                <span className="bg-white/20 px-4 py-2 rounded-lg">{freeNames[3]?.name}</span>
-                <span className="bg-white/20 px-4 py-2 rounded-lg">{freeNames[4]?.name}</span>
-              </div>
-
-              <button
-                onClick={handleGenerateMore}
-                className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-xl shadow-lg flex items-center justify-center gap-2 mx-auto"
-              >
-                <Sparkles size={24} />
-                Unlock All 3 Names - $0.99
-              </button>
-            </div>
+            <>
+              {freeNames.slice(2, 5).map((suggestion, index) => (
+                <div key={index + 2} className="bg-white rounded-2xl shadow-xl p-8 relative overflow-hidden">
+                  {/* Blur overlay */}
+                  <div className="filter blur-sm pointer-events-none">
+                    <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
+                    <p className="text-gray-600 mb-4">Hidden details...</p>
+                  </div>
+                  
+                  {/* Lock overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 flex flex-col items-center justify-center text-white p-8">
+                    <div className="text-center">
+                      <div className="text-6xl mb-4">🔒</div>
+                      <h4 className="text-2xl font-bold mb-2">{suggestion.name}</h4>
+                      <p className="text-blue-100 mb-6">Meaning, popularity & personalized insights locked</p>
+                      <button
+                        onClick={handleGenerateMore}
+                        className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-lg shadow-lg flex items-center justify-center gap-2 mx-auto"
+                      >
+                        <Sparkles size={20} />
+                        Unlock All 3 for $0.99
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
           ) : (
             <>
               {freeNames.slice(2, 5).map((suggestion, index) => (
