@@ -1391,7 +1391,7 @@ if (step === 'results') {
               ))}
               
               {/* Single overlay covering all 3 */}
-              <div className="absolute left-24 right-24 top-20 bottom-20 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 rounded-2xl flex items-center justify-center p-8 shadow-2xl">
+              <div className="absolute left-4 right-4 md:left-48 md:right-48 top-16 bottom-16 md:top-20 md:bottom-20 bg-gradient-to-br from-blue-500/95 to-cyan-500/95 rounded-2xl flex items-center justify-center p-6 shadow-2xl">
                 <div className="text-center text-white">
                   <div className="text-6xl mb-4">🔒</div>
                   <h3 className="text-3xl font-bold mb-4">3 More Names Locked</h3>
