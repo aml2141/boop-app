@@ -82,6 +82,7 @@ export default function BabyNameGenerator() {
   const saved = localStorage.getItem('boopFavorites');
   return saved ? JSON.parse(saved) : [];
 });
+const [showFavorites, setShowFavorites] = useState(false);
 
 // GenerationProgress component
   const GenerationProgress = ({ progress, status }) => (
@@ -108,7 +109,22 @@ useEffect(() => {
     console.log('Admin mode activated');
   }
 }, []);
-const [showFavorites, setShowFavorites] = useState(false);
+// Favorites functions
+const toggleFavorite = (suggestion) => {
+  setFavorites(prev => {
+    const isFav = prev.some(fav => fav.name === suggestion.name);
+    const updated = isFav 
+      ? prev.filter(fav => fav.name !== suggestion.name)
+      : [...prev, suggestion];
+    localStorage.setItem('boopFavorites', JSON.stringify(updated));
+    return updated;
+  });
+};
+
+const isFavorited = (suggestion) => {
+  return favorites.some(fav => fav.name === suggestion.name);
+};
+
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
@@ -566,23 +582,7 @@ const handleStartOverPayment = async () => {
       window.location.href = `sms:?body=${encoded}`;
     }
   };
-  const toggleFavorite = (name) => {
-  const isFavorited = favorites.some(fav => fav.name === name.name);
-  let newFavorites;
-  
-  if (isFavorited) {
-    newFavorites = favorites.filter(fav => fav.name !== name.name);
-  } else {
-    newFavorites = [...favorites, name];
-  }
-  
-  setFavorites(newFavorites);
-  localStorage.setItem('boopFavorites', JSON.stringify(newFavorites));
-};
 
-const isFavorited = (name) => {
-  return favorites.some(fav => fav.name === name.name);
-};
 const saveNameAsImage = async (name, index) => {
   console.log('Generating image for:', name.name);
   
