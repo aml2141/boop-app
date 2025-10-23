@@ -373,58 +373,67 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
   await new Promise(resolve => setTimeout(resolve, 50));
 
   try {
-const response = await fetch(`/api/generate-names`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    formData: formData,
-    count: 5
-  })
-});
+      // Get previously seen names to avoid duplicates
+      const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
+      
+      const response = await fetch(`/api/generate-names`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formData: formData,
+          existingNames: seenNames.join(', '),
+          count: 5
+        })
+      });
 
-const data = await response.json();
-const content = data.names;
+      const data = await response.json();
+      const content = data.names;
 
-const jsonMatch = content.match(/\[[\s\S]*\]/);
-if (jsonMatch) {
-  const names = JSON.parse(jsonMatch[0]);
-  setSuggestions(names);
-  setStep('results');
-  setHasGeneratedOnce(true);
-}
-  } catch (error) {
-    console.error('Error generating names:', error);
-    setError({
-      type: 'generation',
-      message: 'We encountered an issue generating your names. Please try again.'
-    });
-  } finally {
-    setLoading(false);
-    clearInterval(progressInterval);
-setGenerationProgress(100);
-setGenerationStatus('Complete!');
-  }
-};
-
- const generateAdditionalNames = async (count) => {
-    setLoading(true);
-setGenerationProgress(0);
-setGenerationStatus('Generating 5 more amazing names...');
-
-const progressInterval = setInterval(() => {
-  setGenerationProgress(prev => {
-    if (prev >= 90) {
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const names = JSON.parse(jsonMatch[0]);
+        setSuggestions(names);
+        
+        // Track these names to avoid showing again
+        const allSeenNames = [...seenNames, ...names.map(n => n.name)];
+        localStorage.setItem('boopSeenNames', JSON.stringify([...new Set(allSeenNames)]));
+        
+        setStep('results');
+        setHasGeneratedOnce(true);
+      }
+    } catch (error) {
+      console.error('Error generating names:', error);
+      setError({
+        type: 'generation',
+        message: 'We encountered an issue generating your names. Please try again.'
+      });
+    } finally {
+      setLoading(false);
       clearInterval(progressInterval);
-      return 90;
+      setGenerationProgress(100);
+      setGenerationStatus('Complete!');
     }
-    return prev + 10;
-  });
-}, 800);
+  };
 
-setTimeout(() => setGenerationStatus('Finding unique suggestions...'), 2000);
-setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
+  const generateAdditionalNames = async (count) => {
+    setLoading(true);
+    setGenerationProgress(0);
+    setGenerationStatus('Generating 5 more amazing names...');
+
+    const progressInterval = setInterval(() => {
+      setGenerationProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(progressInterval);
+          return 90;
+        }
+        return prev + 10;
+      });
+    }, 800);
+
+    setTimeout(() => setGenerationStatus('Finding unique suggestions...'), 2000);
+    setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
     
     try {
       const existingNames = suggestions.map(s => s.name).join(', ');
