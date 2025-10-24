@@ -9,7 +9,7 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQz
 const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
 const MaintenanceScreen = () => (
-  <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center px-6">
+  <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 flex items-center justify-center px-6">
     <div className="max-w-md text-center">
       <Baby className="mx-auto text-blue-600 mb-6" size={80} />
       <h1 className="text-5xl font-bold text-gray-800 mb-4">Boop</h1>
@@ -900,7 +900,7 @@ if (isMobile) {
   // FORM SCREEN
   if (step === 'form') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 px-6 py-12">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8 pt-8">
             <div className="flex items-center justify-center gap-3 mb-2">
@@ -1040,7 +1040,7 @@ if (isMobile) {
 // LOADING SCREEN
 if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 flex items-center justify-center px-6">
         <GenerationProgress progress={generationProgress} status={generationStatus} />
       </div>
     );
@@ -1048,7 +1048,7 @@ if (loading) {
 // ERROR MODAL
 if (error) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 p-6 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md">
         <div className="text-center mb-6">
           <div className="inline-block p-4 bg-red-100 rounded-full mb-4">
@@ -1096,7 +1096,7 @@ if (error) {
 // FAVORITES SCREEN
   if (showFavorites) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 px-6 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -1303,7 +1303,7 @@ if (step === 'results') {
   const premiumNames = suggestions.slice(5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 px-6 py-12">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -1613,7 +1613,7 @@ if (step === 'results') {
 // FAVORITES SCREEN
 if (showFavorites) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-cyan-100 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-cyan-400 to-blue-300 px-6 py-12">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
