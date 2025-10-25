@@ -14,10 +14,10 @@ const MaintenanceScreen = () => (
       <Baby className="mx-auto text-blue-600 mb-6" size={80} />
       <h1 className="text-5xl font-bold text-gray-800 mb-4">Boop</h1>
       <h2 className="text-2xl font-bold text-gray-800 mb-4">🛠️ Under Maintenance</h2>
-      <p className="text-gray-600 mb-6">
+      <p className="text-black mb-6">
         We're making some improvements to bring you an even better baby name experience!
       </p>
-      <p className="text-gray-500 text-sm">
+      <p className="text-black text-sm">
         We'll be back shortly. Thank you for your patience! 💙
       </p>
       <div className="mt-8">
@@ -90,7 +90,7 @@ const [showFavorites, setShowFavorites] = useState(false);
       <div className="text-center">
         <Baby className="mx-auto text-blue-600 animate-bounce mb-4" size={64} />
         <p className="text-xl font-semibold text-gray-800 mb-2">{status}</p>
-        <p className="text-sm text-gray-600">{progress}% complete</p>
+        <p className="text-sm text-black">{progress}% complete</p>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
         <div 
@@ -908,7 +908,7 @@ if (isMobile) {
               <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Tell Us Your Story</h2>
-            <p className="text-gray-600 text-lg">Let's find a name your baby will love!</p>
+            <p className="text-black text-lg">Let's find a name your baby will love!</p>
           </div>
 
           <div className="mb-8">
@@ -916,7 +916,7 @@ if (isMobile) {
               <span className="text-sm font-semibold text-gray-700">
                 Question {currentFormStep + 1} of {formSteps.length}
               </span>
-              <span className="text-sm text-gray-500">~2 minutes</span>
+              <span className="text-sm text-black">~2 minutes</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -1024,7 +1024,7 @@ if (isMobile) {
             </div>
           </div>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-black text-sm mt-6">
             We use your context to suggest culturally relevant, meaningful names
           </p>
           <div className="text-center mt-4 space-x-4">
@@ -1055,7 +1055,7 @@ if (error) {
             <span className="text-4xl">😔</span>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops! Something Went Wrong</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <p className="text-black">{error.message}</p>
         </div>
 
         <div className="space-y-3">
@@ -1104,14 +1104,14 @@ if (error) {
               <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800 mb-2">⭐ My Favorite Names</h2>
-            <p className="text-gray-600">Your saved baby names ({favorites.length})</p>
+            <p className="text-black">Your saved baby names ({favorites.length})</p>
           </div>
 
           {favorites.length === 0 ? (
             <div className="text-center py-12">
               <Star className="mx-auto text-gray-400 mb-4" size={64} />
-              <p className="text-xl text-gray-600">No favorites yet!</p>
-              <p className="text-gray-500 mt-2">Tap the star icon on any name to save it here.</p>
+              <p className="text-xl text-black">No favorites yet!</p>
+              <p className="text-black mt-2">Tap the star icon on any name to save it here.</p>
             </div>
           ) : (
            <div className="grid gap-6 md:grid-cols-1 mb-8">
@@ -1175,7 +1175,7 @@ if (error) {
                 </div>
               )}
               
-              <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+              <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
               
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
                 <p className="text-gray-700 leading-relaxed">
@@ -1266,7 +1266,7 @@ if (error) {
                     </div>
                   )}
                   
-                  <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                  <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
                   
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
                     <p className="text-gray-700 leading-relaxed">
@@ -1311,7 +1311,7 @@ if (step === 'results') {
             <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Perfect Baby Names</h2>
-          <p className="text-gray-600">Personalized suggestions just for your family</p>
+          <p className="text-black">Personalized suggestions just for your family</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-1 mb-8">
@@ -1375,7 +1375,7 @@ if (step === 'results') {
                 </div>
               )}
               
-              <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+              <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
               
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
                 <p className="text-gray-700 leading-relaxed">
@@ -1394,7 +1394,7 @@ if (step === 'results') {
                   <h3 className="text-4xl font-bold text-gray-800 mb-3">{suggestion.name}</h3>
                   <div className="filter blur-md">
                     <p className="text-blue-600 mb-2">🔊 Hidden</p>
-                    <p className="text-gray-600 mb-4">Locked...</p>
+                    <p className="text-black mb-4">Locked...</p>
                   </div>
                 </div>
               ))}
@@ -1474,7 +1474,7 @@ if (step === 'results') {
                     </div>
                   )}
                   
-                  <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                  <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
                   
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
                     <p className="text-gray-700 leading-relaxed">
@@ -1548,7 +1548,7 @@ if (step === 'results') {
     )}
   </div>
 )}
-                  <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                  <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
                   
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 mb-4">
                     <p className="text-gray-700 leading-relaxed">
@@ -1621,14 +1621,14 @@ if (showFavorites) {
             <h1 className="text-5xl font-bold text-gray-800">Boop</h1>
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">⭐ My Favorite Names</h2>
-          <p className="text-gray-600">Your saved baby names ({favorites.length})</p>
+          <p className="text-black">Your saved baby names ({favorites.length})</p>
         </div>
 
         {favorites.length === 0 ? (
           <div className="text-center py-12">
             <Star className="mx-auto text-gray-400 mb-4" size={64} />
-            <p className="text-xl text-gray-600">No favorites yet!</p>
-            <p className="text-gray-500 mt-2">Tap the star icon on any name to save it here.</p>
+            <p className="text-xl text-black">No favorites yet!</p>
+            <p className="text-black mt-2">Tap the star icon on any name to save it here.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-1 mb-8">
@@ -1670,7 +1670,7 @@ if (showFavorites) {
                   </div>
                 )}
                 
-                <p className="text-gray-600 italic mb-4 text-lg">"{suggestion.meaning}"</p>
+                <p className="text-black italic mb-4 text-lg">"{suggestion.meaning}"</p>
                 
                 <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4">
                   <p className="text-gray-700 leading-relaxed">
