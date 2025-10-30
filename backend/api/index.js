@@ -65,24 +65,25 @@ CRITICAL INSTRUCTIONS:
 1. FIRST AND FOREMOST: Honor the user's stated style preferences exactly (${formData.style || 'any style'})
 2. Generate ${nameCount} DIVERSE names - avoid suggesting the same names to different families
 3. HEAVILY personalize based on their unique context (heritage, siblings, location, values, traditions)
-4. Avoid generic suggestions - if suggesting a popular name, you must explain why it's uniquely suited to THIS specific family
-5. Increase creativity and variety - think beyond the obvious choices
+4. **BLEND BOTH PARTNERS' BACKGROUNDS EQUALLY** - if both heritages/religions are provided, ensure suggestions honor BOTH traditions, not just one
+5. Avoid generic suggestions - if suggesting a popular name, you must explain why it's uniquely suited to THIS specific family
+6. Increase creativity and variety - think beyond the obvious choices
 
 User Context:
 - Parent Name: ${formData.userName || 'Not provided'}
 - Preferred Gender: ${formData.babyGender || 'Any'}
 - Location: ${formData.location || 'Not provided'} (consider regional preferences and cultural context)
 - Baby Will Grow Up In: ${formData.regionGrowUp || 'Same as location'} (consider future cultural context)
-- Heritage: ${formData.heritage || 'Not provided'} (weigh this HEAVILY)
+- Heritage: ${formData.heritage || 'Not provided'} ⚠️ CRITICAL: If partner heritage is also provided, give EQUAL weight to both
 - Partner Name: ${formData.partnerName || 'Not provided'}
 - Parent Names: ${formData.parentNames || 'Not provided'}
-- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'} (blend both heritages meaningfully)
+- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'} ⚠️ CRITICAL: Blend BOTH heritages equally - find names that work across both cultures or alternate between them
 - Partner's Parent Names: ${formData.partnerParentNames || 'Not provided'}
 - Sibling Names: ${formData.siblingNames || 'Not provided'} (ensure the name fits the sibling set's style and flow)
 - Family Naming Traditions: ${formData.familyTraditions || 'Not provided'} (honor these traditions if provided)
 - Family Names to Honor/Avoid: ${formData.familyNamesToHonor || 'Not provided'} (prioritize honoring or avoiding these specific names)
 - Values to Reflect: ${formData.values || 'Not provided'} (choose names that embody these values)
-- Religious/Spiritual Preferences: ${formData.religiousPreferences || 'Not provided'} (respect these preferences in name meanings)
+- Religious/Spiritual Preferences: ${formData.religiousPreferences || 'Not provided'} ⚠️ CRITICAL: If multiple religions mentioned, find names that bridge both traditions or alternate between them
 - Last Name: ${formData.lastName || 'Not provided'} (ensure good flow and avoid unfortunate initials)
 - Languages Spoken: ${formData.languages || 'Not provided'} (ensure name works well in these languages)
 - Style Preference: ${formData.style || 'Not provided'} ⚠️ THIS IS CRITICAL - match this style exactly
@@ -92,11 +93,17 @@ ${existingNames && existingNames.length > 0 ? `
 🚨 MANDATORY: Do NOT suggest any of these previously generated names: ${existingNames}
 Generate completely different options.` : ''}
 
+**BLENDING STRATEGY**: When partners have different heritages or religions:
+- Include names that work in BOTH cultures (universal appeal)
+- Include names from EACH heritage/tradition (balanced representation)
+- Explain how each name honors or bridges both backgrounds
+- NEVER favor one heritage/religion over the other
+
 For each name, provide:
 1. name: The suggested name
 2. pronunciation: Clear phonetic guide (e.g., "ah-MEE-lee-ah")
 3. meaning: Origin and meaning (1-2 sentences)
-4. reason: Why this name specifically works for THIS family (2-3 detailed sentences that reference their heritage, sibling names, location, values, traditions, or stated preferences)
+4. reason: Why this name specifically works for THIS family (2-3 detailed sentences that reference BOTH heritages if applicable, sibling names, location, values, traditions, or stated preferences)
 5. rank2024: 2024 SSA popularity rank (use real data if you know it, or "Not ranked" for rare names)
 6. trend2025: One of: "Rising", "Timeless", "Declining", or "Emerging"
 7. regionalNote: (optional) If relevant to their location/heritage
