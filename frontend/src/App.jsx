@@ -146,93 +146,138 @@ const isFavorited = (suggestion) => {
   const [suggestions, setSuggestions] = useState([]);
 
   const formSteps = [
-    {
-      id: 'userName',
-      label: "What's your name?",
-      placeholder: 'e.g., Sarah',
-      type: 'text',
-      required: true
-    },
-    {
-  id: 'babyGender',
-  label: 'What types of names are you interested in?',
-  type: 'select',
-  required: true,
-  options: [
-    { value: '', label: 'Choose...' },
-    { value: 'boy', label: 'Boy names' },
-    { value: 'girl', label: 'Girl names' },
-    { value: 'neutral', label: 'Gender-neutral names' },
-    { value: 'any', label: "I'm open to all names" }
-  ]
-},
-   {
-  id: 'location',
-  label: 'Where do you live?',
-  placeholder: 'e.g., Brooklyn, Austin, London, Tokyo...',
-  type: 'text',
-  required: true
-  },
-    {
-      id: 'heritage',
-      label: "What's your heritage or cultural background?",
-      placeholder: 'e.g., Eastern European, Irish, Italian, Mexican...',
-      type: 'text',
-      required: false
-    },
-    {
-      id: 'partnerName',
-      label: "Your partner's name",
-      placeholder: 'e.g., Alex',
-      type: 'text',
-      required: false
-    },
   {
-  id: 'parentNames',
-  label: "What are your parent's names?",
-  type: 'text',
-  placeholder: 'e.g., Sarah and Michael',
-},
-{
-  id: 'partnerHeritage',
-  label: "What's your partner's heritage or cultural background?",
-  type: 'text',
-  placeholder: 'e.g., Japanese, Mexican, Irish',
-},
-{
-  id: 'partnerParentNames',
-  label: "What are your partner's parent's names?",
-  type: 'text',
-  placeholder: 'e.g., Maria and Carlos',
-},
-    {
-      id: 'siblingNames',
-      label: 'Do you already have children? If so, what are their names?',
-      placeholder: 'e.g., Emma, Liam',
-      type: 'text',
-      required: false
-    },
-    {
-      id: 'style',
-      label: 'What style of name do you prefer?',
-      type: 'select',
-      required: true,
-      options: [
-        { value: '', label: 'Choose a style...' },
-        { value: 'classic', label: 'Classic & Timeless' },
-        { value: 'modern', label: 'Modern & Trendy' },
-        { value: 'unique', label: 'Unique & Uncommon' },
-        { value: 'traditional', label: 'Traditional & Cultural' }
-      ]
-    },
-    {
-      id: 'additionalInfo',
-      label: 'Any other preferences or context?',
-      placeholder: 'Tell us anything else that matters to you...',
-      type: 'textarea',
-      required: false
-    }
-  ];
+    id: 'userName',
+    label: "What's your name?",
+    placeholder: 'e.g., Sarah',
+    type: 'text',
+    required: true
+  },
+  {
+    id: 'babyGender',
+    label: 'What types of names are you interested in?',
+    type: 'select',
+    required: true,
+    options: [
+      { value: '', label: 'Choose...' },
+      { value: 'boy', label: 'Boy names' },
+      { value: 'girl', label: 'Girl names' },
+      { value: 'neutral', label: 'Gender-neutral names' },
+      { value: 'any', label: "I'm open to all names" }
+    ]
+  },
+  {
+    id: 'location',
+    label: 'Where do you live?',
+    placeholder: 'e.g., Brooklyn, Austin, London, Tokyo...',
+    type: 'text',
+    required: true
+  },
+  {
+    id: 'regionGrowUp',
+    label: 'What region/city will your baby grow up in?',
+    placeholder: 'e.g., New York, Tokyo, Same as above...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'heritage',
+    label: "What's your heritage or cultural background?",
+    placeholder: 'e.g., Eastern European, Irish, Italian, Mexican...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'partnerName',
+    label: "Your partner's name",
+    placeholder: 'e.g., Alex',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'parentNames',
+    label: "What are your parent's names?",
+    type: 'text',
+    placeholder: 'e.g., Sarah and Michael',
+    required: false
+  },
+  {
+    id: 'partnerHeritage',
+    label: "What's your partner's heritage or cultural background?",
+    type: 'text',
+    placeholder: 'e.g., Japanese, Mexican, Irish',
+    required: false
+  },
+  {
+    id: 'partnerParentNames',
+    label: "What are your partner's parent's names?",
+    type: 'text',
+    placeholder: 'e.g., Maria and Carlos',
+    required: false
+  },
+  {
+    id: 'siblingNames',
+    label: 'Do you already have children? If so, what are their names?',
+    placeholder: 'e.g., Emma, Liam',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'familyTraditions',
+    label: 'Any family traditions around naming (e.g., honoring ancestors, religious customs)?',
+    placeholder: 'e.g., We honor grandparents, Use family surnames as middle names...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'familyNamesToHonor',
+    label: 'Are there any family names you would like to specifically honor or avoid?',
+    placeholder: 'e.g., Honor: Rose, Avoid: John',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'values',
+    label: 'What values do you want the name to reflect?',
+    placeholder: 'e.g., Strength, kindness, creativity, wisdom...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'religiousPreferences',
+    label: 'Do you want your baby name to include any religious or spiritual preferences?',
+    placeholder: 'e.g., Jewish, Christian, Hindu, None...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'lastName',
+    label: 'What is your last name?',
+    placeholder: 'e.g., Smith, Garcia, Chen...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'languages',
+    label: 'What languages are spoken in your household?',
+    placeholder: 'e.g., English, Spanish, Mandarin...',
+    type: 'text',
+    required: false
+  },
+  {
+    id: 'style',
+    label: 'What style of name do you prefer?',
+    type: 'select',
+    required: true,
+    options: [
+      { value: '', label: 'Choose a style...' },
+      { value: 'classic', label: 'Classic & Timeless' },
+      { value: 'modern', label: 'Modern & Trendy' },
+      { value: 'unique', label: 'Unique & Uncommon' },
+      { value: 'traditional', label: 'Traditional & Cultural' }
+    ]
+  }
+];
 
   const majorCities = [
     { value: 'New York City, NY', label: 'New York City, NY' },
