@@ -353,9 +353,31 @@ const [error, setError] = useState(null);
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
     }
-      if (params.get('unlock') === 'initial' && suggestions.length > 0) {
+if (params.get('unlock') === 'initial' && suggestions.length > 0) {
       setHasUnlockedInitial(true);
       setHasUnlockedOnce(true);
+      
+      // Send email with all 5 unlocked names
+      (async () => {
+        try {
+          await fetch('/api/send-names-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              names: suggestions.slice(0, 5), // All 5 names
+              userName: formData.userName,
+              isFullUnlock: true
+            })
+          });
+          console.log('Full unlock email sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send unlock email (non-critical):', emailError);
+        }
+      })();
+      
       sessionStorage.removeItem('boopFormData');
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
@@ -444,7 +466,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         })
       });
 
-      const data = await response.json();
+  const data = await response.json();
       const content = data.names;
 
       const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -455,6 +477,27 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         // Track these names to avoid showing again
         const allSeenNames = [...seenNames, ...names.map(n => n.name)];
         localStorage.setItem('boopSeenNames', JSON.stringify([...new Set(allSeenNames)]));
+        
+        // Send email with first 2 names (free preview)
+        try {
+          const freeNames = names.slice(0, 2); // Only first 2 names
+          await fetch('/api/send-names-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              names: freeNames,
+              userName: formData.userName,
+              isFullUnlock: false
+            })
+          });
+          console.log('Free names email sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send email (non-critical):', emailError);
+          // Don't break the flow if email fails
+        }
         
         setStep('results');
         setHasGeneratedOnce(true);
