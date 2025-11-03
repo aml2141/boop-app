@@ -990,9 +990,20 @@ if (isMobile) {
                   {formSteps[currentFormStep].required && <span className="text-red-500 ml-1">*</span>}
                 </label>
                 
-                {formSteps[currentFormStep].type === 'text' && (
+{formSteps[currentFormStep].type === 'text' && (
                   <input
                     type="text"
+                    value={formData[formSteps[currentFormStep].id] || ''}
+                    onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
+                    placeholder={formSteps[currentFormStep].placeholder}
+                    className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
+                    autoFocus
+                  />
+                )}
+
+                {formSteps[currentFormStep].type === 'email' && (
+                  <input
+                    type="email"
                     value={formData[formSteps[currentFormStep].id] || ''}
                     onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
                     placeholder={formSteps[currentFormStep].placeholder}
