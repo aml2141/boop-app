@@ -126,22 +126,26 @@ const isFavorited = (suggestion) => {
   return favorites.some(fav => fav.name === suggestion.name);
 };
 
-  const [error, setError] = useState(null);
+const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
     babyGender: '',
     location: '',
+    regionGrowUp: '',
+    heritage: '',
+    partnerName: '',
     parentNames: '',
-    partnerHeritage: '',  
+    partnerHeritage: '',
     partnerParentNames: '',
     siblingNames: '',
-    partnerName: '',
-    favoriteColor: '',
-    favoriteFood: '',
-    heritage: '',
-    preferences: '',
+    familyTraditions: '',
+    familyNamesToHonor: '',
+    values: '',
+    religiousPreferences: '',
+    lastName: '',
+    languages: '',
     style: '',
-    additionalInfo: ''
+    email: ''
   });
   const [suggestions, setSuggestions] = useState([]);
 
@@ -264,7 +268,7 @@ const isFavorited = (suggestion) => {
     type: 'text',
     required: false
   },
-  {
+{
     id: 'style',
     label: 'What style of name do you prefer?',
     type: 'select',
@@ -276,6 +280,13 @@ const isFavorited = (suggestion) => {
       { value: 'unique', label: 'Unique & Uncommon' },
       { value: 'traditional', label: 'Traditional & Cultural' }
     ]
+  },
+  {
+    id: 'email',
+    label: 'Where should we send your personalized names?',
+    placeholder: 'your.email@example.com',
+    type: 'email',
+    required: true
   }
 ];
 
