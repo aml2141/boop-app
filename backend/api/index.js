@@ -159,6 +159,60 @@ let fullContent = '';
     res.status(500).json({ error: error.message });
   }
 });
+// Helper function to send email with names
+async function sendNamesEmail(email, names, userName, isFullUnlock = false) {
+  try {
+    const namesList = names.map(name => `
+      <div style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+        <h2 style="color: #1e293b; margin: 0 0 10px 0; font-size: 24px;">${name.name}</h2>
+        <p style="color: #64748b; margin: 5px 0;"><strong>Pronunciation:</strong> ${name.pronunciation}</p>
+        <p style="color: #64748b; margin: 5px 0;"><strong>Meaning:</strong> ${name.meaning}</p>
+        <p style="color: #475569; margin: 10px 0 5px 0;">${name.reason}</p>
+        ${name.rank2024 ? `<p style="color: #64748b; margin: 5px 0; font-size: 14px;">2024 Rank: #${name.rank2024} • ${name.trend2025}</p>` : ''}
+      </div>
+    `).join('');
+
+    await resend.emails.send({
+      from: 'Boop <hello@helloboop.com>',
+      to: email,
+      subject: isFullUnlock ? `${userName}, here are all your personalized baby names! 👶` : `${userName}, here are your first personalized baby names! 👶`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #1e293b; font-size: 32px; margin: 0;">👶 Boop</h1>
+            <p style="color: #64748b; font-size: 18px;">Your Personalized Baby Names</p>
+          </div>
+          
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">Hi ${userName}!</p>
+          <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+            ${isFullUnlock 
+              ? "Here are all your unlocked personalized baby name suggestions:" 
+              : "Here are your first personalized baby name suggestions. Unlock more names anytime at helloboop.com!"}
+          </p>
+          
+          ${namesList}
+          
+          ${!isFullUnlock ? `
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="https://helloboop.com" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                Get More Names →
+              </a>
+            </div>
+          ` : ''}
+          
+          <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">
+            <p style="color: #94a3b8; font-size: 14px;">© 2025 Boop • <a href="https://helloboop.com" style="color: #3b82f6;">helloboop.com</a></p>
+          </div>
+        </div>
+      `
+    });
+    
+    console.log('Email sent successfully to:', email);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+}
 
 // OPTIONS handler for send-names-email
 app.options('/api/send-names-email', cors());
