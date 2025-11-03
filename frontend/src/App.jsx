@@ -8,6 +8,9 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQz
 // Maintenance mode check - MUST BE BEFORE THE COMPONENT
 const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
+// API URL for backend
+const API_URL = import.meta.env.VITE_API_URL || 'https://boop-backend-v2.vercel.app';
+
 const MaintenanceScreen = () => (
   <div className="min-h-screen bg-gradient-to-br from-blue-300 via-cyan-300 to-blue-200 flex items-center justify-center px-6">
     <div className="max-w-md text-center">
@@ -360,7 +363,7 @@ if (params.get('unlock') === 'initial' && suggestions.length > 0) {
       // Send email with all 5 unlocked names
       (async () => {
         try {
-          await fetch('/api/send-names-email', {
+          await fetch('${API_URL}/api/send-names-email', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -454,7 +457,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
       // Get previously seen names to avoid duplicates
       const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
       
-      const response = await fetch(`/api/generate-names`, {
+      const response = await fetch(`${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -481,7 +484,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         // Send email with first 2 names (free preview)
         try {
           const freeNames = names.slice(0, 2); // Only first 2 names
-          await fetch('/api/send-names-email', {
+      await fetch(`${API_URL}${API_URL}/api/send-names-email`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -537,7 +540,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
     try {
       const existingNames = suggestions.map(s => s.name).join(', ');
       
-      const response = await fetch(`${API_URL}/api/generate-names`, {
+      const response = await fetch(`${API_URL}${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -582,7 +585,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('${API_URL}/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -610,7 +613,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch('${API_URL}/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -657,7 +660,7 @@ const handleStartOverPayment = async () => {
   sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   
   try {
-    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
+    const response = await fetch('https://boop-app-eight.vercel.app${API_URL}/api/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
