@@ -129,7 +129,7 @@ Return ONLY valid JSON array with no additional text:
 const message = await anthropic.messages.create({
   model: 'claude-sonnet-4-20250514',
   max_tokens: 2000,
-  stream: true,  // <-- ADD THIS
+ stream: false,
   messages: [
     {
       role: 'user',
@@ -137,23 +137,10 @@ const message = await anthropic.messages.create({
     }
   ]
 });
-let fullContent = '';
-    
-    // Set headers for streaming
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    for await (const event of message) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-        const chunk = event.delta.text;
-        fullContent += chunk;
-        res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
-      }
-    }
-    
-    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-    res.end();
+
+const content = message.content[0].text;
+res.json({ names: content });
+
   } catch (error) {
     console.error('Error generating names:', error);
     res.status(500).json({ error: error.message });
