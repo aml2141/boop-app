@@ -1,7 +1,10 @@
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { Resend } = require('resend');
 const cors = require('cors');
 require('dotenv').config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 app.use(cors({
@@ -156,13 +159,32 @@ let fullContent = '';
     res.status(500).json({ error: error.message });
   }
 });
+
+// Endpoint to send names via email
+app.post('/api/send-names-email', async (req, res) => {
+  try {
+    const { email, names, userName, isFullUnlock } = req.body;
+    
+    if (!email || !names || !userName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    await sendNamesEmail(email, names, userName, isFullUnlock);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error in send-names-email:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/create-checkout-session', async (req, res) => {
- const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   
-try {
-  const { priceId, successUrl, cancelUrl } = req.body;
-  
-  console.log('Creating checkout session with:', { priceId, successUrl, cancelUrl });
+  try {
+    const { priceId, successUrl, cancelUrl } = req.body;
+    
+    console.log('Creating checkout session with:', { priceId, successUrl, cancelUrl });
+    console.log('Using Stripe key starting with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
   console.log('Using Stripe key starting with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
 
   const session = await stripe.checkout.sessions.create({
