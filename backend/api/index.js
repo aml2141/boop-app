@@ -160,8 +160,11 @@ let fullContent = '';
   }
 });
 
+// OPTIONS handler for send-names-email
+app.options('/api/send-names-email', cors());
+
 // Endpoint to send names via email
-app.post('/api/send-names-email', async (req, res) => {
+app.post('/api/send-names-email', cors(), async (req, res) => {
   try {
     const { email, names, userName, isFullUnlock } = req.body;
     
