@@ -127,9 +127,8 @@ For each name, provide:
 Return ONLY valid JSON array with no additional text:
 [{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
 const message = await anthropic.messages.create({
-  model: 'claude-sonnet-4-20250514',
+model: 'claude-sonnet-4-20241022',
   max_tokens: 2000,
- stream: false,
   messages: [
     {
       role: 'user',
@@ -138,6 +137,7 @@ const message = await anthropic.messages.create({
   ]
 });
 
+// Extract text content from non-streaming response
 const content = message.content[0].text;
 res.json({ names: content });
 
