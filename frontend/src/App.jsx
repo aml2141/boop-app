@@ -355,7 +355,7 @@ if (params.get('unlock') === 'initial' && suggestions.length > 0) {
       // Send email with all 5 unlocked names
       (async () => {
         try {
-          await fetch('${API_URL}/api/send-names-email', {
+          await fetch(`${API_URL}/api/send-names-email`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -476,7 +476,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         // Send email with first 2 names (free preview)
         try {
           const freeNames = names.slice(0, 2); // Only first 2 names
-      await fetch(`${API_URL}${API_URL}/api/send-names-email`, {
+      await fetch(`${API_URL}/api/send-names-email`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -532,7 +532,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
     try {
       const existingNames = suggestions.map(s => s.name).join(', ');
       
-      const response = await fetch(`${API_URL}${API_URL}/api/generate-names`, {
+      const response = await fetch(`${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -577,7 +577,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('${API_URL}/api/create-checkout-session', {
+      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -605,7 +605,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('${API_URL}/api/create-checkout-session', {
+      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -652,7 +652,7 @@ const handleStartOverPayment = async () => {
   sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   
   try {
-    const response = await fetch('https://boop-app-eight.vercel.app${API_URL}/api/create-checkout-session', {
+    const response = await fetch(`${API_URL}/api/create-checkout-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
