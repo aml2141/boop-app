@@ -10,10 +10,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Handle preflight requests
 app.options('*', cors());
 
-// Explicitly add CORS headers to all responses
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -24,30 +22,6 @@ app.use((req, res, next) => {
 
 app.post('/api/generate-names', async (req, res) => {
   try {
-    const { priceId, successUrl, cancelUrl } = req.body;
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-    });
-
-    res.json({ sessionId: session.id });
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-// Name generation endpoint
-app.post('/api/generate-names', async (req, res) => {
-  try {
     const Anthropic = require('@anthropic-ai/sdk');
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
@@ -56,91 +30,65 @@ app.post('/api/generate-names', async (req, res) => {
     const { formData, existingNames, count } = req.body;
     const nameCount = count || 3;
 
-    console.log('Generating', nameCount, 'names');
-    console.log('Existing names to avoid:', existingNames || 'none');
+    const hasTwoHeritages = formData.heritage && formData.partnerHeritage && 
+                            formData.heritage.toLowerCase() !== formData.partnerHeritage.toLowerCase();
+    
+    const hasTwoReligions = formData.religiousPreferences && 
+                            (formData.religiousPreferences.toLowerCase().includes('catholic') || 
+                             formData.religiousPreferences.toLowerCase().includes('christian')) &&
+                            formData.religiousPreferences.toLowerCase().includes('hindu');
 
-    let prompt = `You are a baby name expert. Generate ${nameCount} diverse baby name suggestions.
+   let prompt = `You are an expert baby name consultant specializing in personalized, meaningful suggestions.
 
-Context:
-- Name: ${formData.userName || 'Not provided'}
+CRITICAL INSTRUCTIONS:
+1. Honor the user's stated style preferences exactly (${formData.style || 'any style'})
+2. Generate ${nameCount} DIVERSE names
+3. ${hasTwoHeritages || hasTwoReligions ? `MANDATORY: Balance both heritages equally - provide ${Math.floor(nameCount/2)} names from ${formData.heritage} and ${Math.ceil(nameCount/2)} from ${formData.partnerHeritage}` : 'Personalize based on context'}
+
+User Context:
+- Parent: ${formData.userName || 'Not provided'}
 - Gender: ${formData.babyGender || 'Any'}
 - Location: ${formData.location || 'Not provided'}
 - Heritage: ${formData.heritage || 'Not provided'}
-- Partners: ${formData.parentNames || 'Not provided'}
-- Partner's Heritage: ${formData.partnerHeritage || 'Not provided'}
-- Partner's Parent's Names: ${formData.partnerParentNames || 'Not provided'}
+- Partner: ${formData.partnerName || 'Not provided'}
+- Partner Heritage: ${formData.partnerHeritage || 'Not provided'}
 - Siblings: ${formData.siblingNames || 'Not provided'}
+- Traditions: ${formData.familyTraditions || 'Not provided'}
+- Values: ${formData.values || 'Not provided'}
+- Religion: ${formData.religiousPreferences || 'Not provided'}
+- Last Name: ${formData.lastName || 'Not provided'}
+- Languages: ${formData.languages || 'Not provided'}
 - Style: ${formData.style || 'Not provided'}
-- Preferences: ${formData.meaning || 'Not provided'}
-- Avoid: ${formData.avoid || 'None'}
 
-${existingNames && existingNames.length > 0 ? `🚨 MUST AVOID these previously suggested names: ${existingNames.join(', ')}` : ''}
+${existingNames ? `Avoid these names: ${existingNames}` : ''}
 
-For each name provide:
-1. The name
-2. Pronunciation guide (phonetic)
-3. Meaning and origin
-4. Why it works for this family (2-3 sentences referencing their context)
-5. 2024 SSA rank (use real data if known, or "Not ranked")
-6. 2025 trend: "Rising", "Timeless", or "Declining"
-7. Regional note if relevant to their location
+Return ONLY JSON: [{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":""}]`;
 
-Return ONLY a JSON array:
-[{"name":"Name","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
+    const message = await anthropic.messages.create({
+      model: 'claude-3-opus-20240229',
+      max_tokens: 2000,
+      messages: [{
+        role: 'user',
+        content: prompt
+      }]
+    });
 
-const message = await anthropic.messages.create({
-  model: 'claude-sonnet-4-20250514',
-  max_tokens: 2000,
-  stream: true,  // <-- ADD THIS
-  messages: [
-    {
-      role: 'user',
-      content: prompt
-    }
-  ]
-});
-let fullContent = '';
-    
-    // Set headers for streaming
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    for await (const event of message) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-        const chunk = event.delta.text;
-        fullContent += chunk;
-        res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
-      }
-    }
-    
-    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-    res.end();
+    const content = message.content[0].text;
+    res.json({ names: content });
+
   } catch (error) {
-    console.error('Error generating names:', error);
+    console.error('Error:', error);
     res.status(500).json({ error: error.message });
   }
 });
+
 app.post('/api/create-checkout-session', async (req, res) => {
-  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-  
   try {
     const { priceId, successUrl, cancelUrl } = req.body;
-try {
-  const { priceId, successUrl, cancelUrl } = req.body;
-  
-  console.log('Creating checkout session with:', { priceId, successUrl, cancelUrl });
-  console.log('Using Stripe key starting with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
-
-  const session = await stripe.checkout.sessions.create({
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
@@ -148,11 +96,10 @@ try {
 
     res.json({ sessionId: session.id });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
     res.status(500).json({ error: error.message });
   }
 });
-// Health check
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
@@ -161,4 +108,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
