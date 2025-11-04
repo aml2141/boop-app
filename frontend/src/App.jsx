@@ -8,9 +8,6 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQz
 // Maintenance mode check - MUST BE BEFORE THE COMPONENT
 const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
-// API URL for backend
-const API_URL = 'https://boop-backend-v3.vercel.app';
-
 const MaintenanceScreen = () => (
   <div className="min-h-screen bg-gradient-to-br from-blue-300 via-cyan-300 to-blue-200 flex items-center justify-center px-6">
     <div className="max-w-md text-center">
@@ -129,25 +126,22 @@ const isFavorited = (suggestion) => {
   return favorites.some(fav => fav.name === suggestion.name);
 };
 
-const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     userName: '',
     babyGender: '',
     location: '',
-    regionGrowUp: '',
-    heritage: '',
-    partnerName: '',
     parentNames: '',
-    partnerHeritage: '',
+    partnerHeritage: '',  
     partnerParentNames: '',
     siblingNames: '',
-    familyTraditions: '',
-    familyNamesToHonor: '',
-    values: '',
-    religiousPreferences: '',
-    lastName: '',
-    languages: '',
+    partnerName: '',
+    favoriteColor: '',
+    favoriteFood: '',
+    heritage: '',
+    preferences: '',
     style: '',
+    additionalInfo: ''
   });
   const [suggestions, setSuggestions] = useState([]);
 
@@ -270,7 +264,7 @@ const [error, setError] = useState(null);
     type: 'text',
     required: false
   },
-{
+  {
     id: 'style',
     label: 'What style of name do you prefer?',
     type: 'select',
@@ -282,7 +276,7 @@ const [error, setError] = useState(null);
       { value: 'unique', label: 'Unique & Uncommon' },
       { value: 'traditional', label: 'Traditional & Cultural' }
     ]
-  },
+  }
 ];
 
   const majorCities = [
@@ -348,31 +342,9 @@ const [error, setError] = useState(null);
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
     }
-if (params.get('unlock') === 'initial' && suggestions.length > 0) {
+      if (params.get('unlock') === 'initial' && suggestions.length > 0) {
       setHasUnlockedInitial(true);
       setHasUnlockedOnce(true);
-      
-      // Send email with all 5 unlocked names
-      (async () => {
-        try {
-          await fetch(`${API_URL}/api/send-names-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: formData.email,
-              names: suggestions.slice(0, 5), // All 5 names
-              userName: formData.userName,
-              isFullUnlock: true
-            })
-          });
-          console.log('Full unlock email sent successfully');
-        } catch (emailError) {
-          console.error('Failed to send unlock email (non-critical):', emailError);
-        }
-      })();
-      
       sessionStorage.removeItem('boopFormData');
       sessionStorage.removeItem('boopSuggestions');
       window.history.replaceState({}, '', window.location.pathname);
@@ -449,7 +421,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
       // Get previously seen names to avoid duplicates
       const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
       
-      const response = await fetch(`${API_URL}/api/generate-names`, {
+      const response = await fetch(`/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -461,7 +433,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         })
       });
 
-  const data = await response.json();
+      const data = await response.json();
       const content = data.names;
 
       const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -472,27 +444,6 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         // Track these names to avoid showing again
         const allSeenNames = [...seenNames, ...names.map(n => n.name)];
         localStorage.setItem('boopSeenNames', JSON.stringify([...new Set(allSeenNames)]));
-        
-        // Send email with first 2 names (free preview)
-        try {
-          const freeNames = names.slice(0, 2); // Only first 2 names
-      await fetch(`${API_URL}/api/send-names-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: formData.email,
-              names: freeNames,
-              userName: formData.userName,
-              isFullUnlock: false
-            })
-          });
-          console.log('Free names email sent successfully');
-        } catch (emailError) {
-          console.error('Failed to send email (non-critical):', emailError);
-          // Don't break the flow if email fails
-        }
         
         setStep('results');
         setHasGeneratedOnce(true);
@@ -577,7 +528,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -605,7 +556,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -652,7 +603,7 @@ const handleStartOverPayment = async () => {
   sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   
   try {
-    const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1028,20 +979,9 @@ if (isMobile) {
                   {formSteps[currentFormStep].required && <span className="text-red-500 ml-1">*</span>}
                 </label>
                 
-{formSteps[currentFormStep].type === 'text' && (
+                {formSteps[currentFormStep].type === 'text' && (
                   <input
                     type="text"
-                    value={formData[formSteps[currentFormStep].id] || ''}
-                    onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
-                    placeholder={formSteps[currentFormStep].placeholder}
-                    className="w-full p-4 text-lg rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none transition-colors"
-                    autoFocus
-                  />
-                )}
-
-                {formSteps[currentFormStep].type === 'email' && (
-                  <input
-                    type="email"
                     value={formData[formSteps[currentFormStep].id] || ''}
                     onChange={(e) => updateField(formSteps[currentFormStep].id, e.target.value)}
                     placeholder={formSteps[currentFormStep].placeholder}
