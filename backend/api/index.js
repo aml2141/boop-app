@@ -65,7 +65,7 @@ ${existingNames ? `Avoid these names: ${existingNames}` : ''}
 Return ONLY JSON: [{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":""}]`;
 
     const message = await anthropic.messages.create({
-model: 'claude-3-5-sonnet-20240620',
+model: 'claude-3-5-sonnet-20241022',
       max_tokens: 2000,
       messages: [{
         role: 'user',

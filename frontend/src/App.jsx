@@ -9,7 +9,7 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQz
 const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
 // API URL for backend
-const API_URL = 'https://boop-app-eight.vercel.app';
+const API_URL = 'https://boop-backend-v2.vercel.app';
 
 const MaintenanceScreen = () => (
   <div className="min-h-screen bg-gradient-to-br from-blue-300 via-cyan-300 to-blue-200 flex items-center justify-center px-6">
