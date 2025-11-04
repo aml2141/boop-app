@@ -148,7 +148,6 @@ const [error, setError] = useState(null);
     lastName: '',
     languages: '',
     style: '',
-    email: ''
   });
   const [suggestions, setSuggestions] = useState([]);
 
@@ -284,13 +283,6 @@ const [error, setError] = useState(null);
       { value: 'traditional', label: 'Traditional & Cultural' }
     ]
   },
-  {
-    id: 'email',
-    label: 'Where should we send your personalized names?',
-    placeholder: 'your.email@example.com',
-    type: 'email',
-    required: true
-  }
 ];
 
   const majorCities = [
