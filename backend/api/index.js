@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/generate-names', async (req, res) => {
+app.post('/api/create-checkout-session', async (req, res) => {
   try {
     const { priceId, successUrl, cancelUrl } = req.body;
 
