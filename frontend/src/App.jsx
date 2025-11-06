@@ -330,7 +330,7 @@ const isFavorited = (suggestion) => {
   const isLastStep = currentFormStep === formSteps.length - 1;
   const canSubmit = formData.userName && formData.location && formData.style;
 
-const API_URL = 'https://boop-backend-v3.vercel.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://boop-backend-v3.vercel.app';
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
