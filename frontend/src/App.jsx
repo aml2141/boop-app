@@ -421,7 +421,7 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
       // Get previously seen names to avoid duplicates
       const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
       
-      const response = await fetch(`/api/generate-names`, {
+    const response = await fetch(`${API_URL}/api/generate-names`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
