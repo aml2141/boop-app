@@ -387,7 +387,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://boop-backend-v3.vercel.
     }
   }, []);
 
-const generateSuggestions = async () => {
+const generateSuggestions = async (retryCount = 0) => {
   const hasMinimumInput = formData.location || formData.heritage || formData.style || formData.userName;
   
   if (!hasMinimumInput) {
@@ -398,46 +398,47 @@ const generateSuggestions = async () => {
   setStep('loading');
   setLoading(true);
   setGenerationProgress(0);
-setGenerationStatus('Analyzing your preferences...');
+  setGenerationStatus('Analyzing your preferences...');
 
-// Simulate progress
-const progressInterval = setInterval(() => {
-  setGenerationProgress(prev => {
-    if (prev >= 90) {
-      clearInterval(progressInterval);
-      return 90;
-    }
-    return prev + 10;
-  });
-}, 800);
+  // Simulate progress
+  const progressInterval = setInterval(() => {
+    setGenerationProgress(prev => {
+      if (prev >= 90) {
+        clearInterval(progressInterval);
+        return 90;
+      }
+      return prev + 10;
+    });
+  }, 800);
 
-// Update status messages
-setTimeout(() => setGenerationStatus('Searching our name database...'), 2000);
-setTimeout(() => setGenerationStatus('Finding perfect matches...'), 5000);
-setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
+  // Update status messages
+  setTimeout(() => setGenerationStatus('Searching our name database...'), 2000);
+  setTimeout(() => setGenerationStatus('Finding perfect matches...'), 5000);
+  setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
   await new Promise(resolve => setTimeout(resolve, 50));
 
   try {
-      // Get previously seen names to avoid duplicates
-      const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
-      
+    // Get previously seen names to avoid duplicates
+    const seenNames = JSON.parse(localStorage.getItem('boopSeenNames') || '[]');
+    
     const response = await fetch(`${API_URL}/api/generate-names`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formData: formData,
-          existingNames: seenNames.join(', '),
-          count: 5
-        })
-      });
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        formData: formData,
+        existingNames: seenNames.join(', '),
+        count: 5
+      })
+    });
 
-      const data = await response.json();
-      const content = data.names;
+    const data = await response.json();
+    const content = data.names;
 
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      try {
         const names = JSON.parse(jsonMatch[0]);
         setSuggestions(names);
         
@@ -447,20 +448,30 @@ setTimeout(() => setGenerationStatus('Finalizing your names...'), 8000);
         
         setStep('results');
         setHasGeneratedOnce(true);
+      } catch (parseError) {
+        // JSON parse failed - retry up to 2 times
+        if (retryCount < 2) {
+          console.log(`JSON parse failed, retrying (attempt ${retryCount + 1}/2)...`);
+          clearInterval(progressInterval);
+          return generateSuggestions(retryCount + 1);
+        } else {
+          throw new Error('Failed to parse names after multiple attempts');
+        }
       }
-    } catch (error) {
-      console.error('Error generating names:', error);
-      setError({
-        type: 'generation',
-        message: 'We encountered an issue generating your names. Please try again.'
-      });
-    } finally {
-      setLoading(false);
-      clearInterval(progressInterval);
-      setGenerationProgress(100);
-      setGenerationStatus('Complete!');
     }
-  };
+  } catch (error) {
+    console.error('Error generating names:', error);
+    setError({
+      type: 'generation',
+      message: 'We encountered an issue generating your names. Please try again.'
+    });
+  } finally {
+    setLoading(false);
+    clearInterval(progressInterval);
+    setGenerationProgress(100);
+    setGenerationStatus('Complete!');
+  }
+};
 
   const generateAdditionalNames = async (count) => {
     setLoading(true);
