@@ -555,10 +555,12 @@ setGenerationStatus('Complete!');
       const stripe = window.Stripe('pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG');
       await stripe.redirectToCheckout({ sessionId });
       
-    } catch (error) {
+} catch (error) {
       console.error('Payment error:', error);
-      setHasUnlockedOnce(true);
-      generateAdditionalNames(5);
+      setError({
+        type: 'payment',
+        message: 'Unable to process payment. Please try again or contact support.'
+      });
     }
   };
 
@@ -583,9 +585,12 @@ setGenerationStatus('Complete!');
       const stripe = window.Stripe('pk_live_51SFK1hPnhWpLDLv40A2hyQrJEx3JREFfllDrYQzaAULkaJOvaROwPD6tI5eCTnFOwF8cRrtOzzHAECBgoeUmi5zM00cIN3fOJG');
       await stripe.redirectToCheckout({ sessionId });
       
-    } catch (error) {
+} catch (error) {
       console.error('Payment error:', error);
-      generateAdditionalNames(5);
+      setError({
+        type: 'payment',
+        message: 'Unable to process payment. Please try again or contact support.'
+      });
     }
   };
 
