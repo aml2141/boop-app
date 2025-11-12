@@ -539,7 +539,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('/api/create-checkout-session', {
+    const response = await fetch(`${API_URL}/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -567,7 +567,7 @@ setGenerationStatus('Complete!');
     sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
     
     try {
-      const response = await fetch('/api/create-checkout-session', {
+      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -614,7 +614,7 @@ const handleStartOverPayment = async () => {
   sessionStorage.setItem('boopSuggestions', JSON.stringify(suggestions));
   
   try {
-    const response = await fetch('https://boop-app-eight.vercel.app/api/create-checkout-session', {
+  const response = await fetch(`${API_URL}/api/create-checkout-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
