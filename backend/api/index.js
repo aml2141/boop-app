@@ -100,7 +100,7 @@ For each name, provide:
 Return ONLY valid JSON array with no additional text:
 [{"name":"","pronunciation":"","meaning":"","reason":"","rank2024":"","trend2025":"","regionalNote":""}]`;
 const message = await anthropic.messages.create({
-model: 'claude-3-5-sonnet-20240620',
+model: 'claude-sonnet-4-5-20250929',
   max_tokens: 2000,
 stream: false,
   messages: [
