@@ -49,18 +49,19 @@ app.post('/api/generate-names', async (req, res) => {
 CRITICAL INSTRUCTIONS:
 1. FIRST AND FOREMOST: Honor the user's stated style preferences exactly (${formData.style || 'any style'})
 2. Generate ${nameCount} DIVERSE names - avoid suggesting the same names to different families
-3. ${hasTwoHeritages || hasTwoReligions ? `🚨 MANDATORY BALANCE REQUIREMENT 🚨
-   This family has TWO DIFFERENT cultural/religious backgrounds that must be honored EQUALLY.
-   Heritage 1: ${formData.heritage || 'Not specified'}
-   Heritage 2: ${formData.partnerHeritage || 'Not specified'}
+3. ${hasTwoHeritages || hasTwoReligions ? `🚨 CRITICAL BALANCE REQUIREMENT 🚨
+   This family has TWO DIFFERENT cultural/religious backgrounds that MUST be honored EQUALLY.
+   Background A: ${formData.heritage || 'Not specified'}
+   Background B: ${formData.partnerHeritage || 'Not specified'}
    Religious backgrounds: ${formData.religiousPreferences || 'Not specified'}
    
-   YOU MUST FOLLOW THIS EXACT FORMULA:
-   - Out of ${nameCount} names, provide EXACTLY ${Math.floor(nameCount/2)} names from the first heritage/religion
-   - Provide EXACTLY ${Math.ceil(nameCount/2)} names from the second heritage/religion
-   - DO NOT provide more than ${Math.ceil(nameCount/2)} names from any single heritage
-   - Before submitting your response, COUNT the names from each heritage to verify balance
-   - If you find yourself suggesting mostly names from one culture, STOP and restart with better balance` : 'Personalize based on their unique context'}
+   MANDATORY DISTRIBUTION:
+   - For ${nameCount} names total: ${Math.floor(nameCount/2)} from Background A, ${Math.ceil(nameCount/2)} from Background B
+   - RANDOMIZE which background appears first in your list
+   - DO NOT favor either background - they are EQUALLY important
+   - Each name's "meaning" field MUST explicitly state which background it represents
+   - Verify balance before responding - count names from each background
+   - If imbalanced, START OVER with better distribution` : 'Personalize based on their unique context'}
 4. Avoid generic suggestions - if suggesting a popular name, you must explain why it's uniquely suited to THIS specific family
 5. Increase creativity and variety - think beyond the obvious choices
 
