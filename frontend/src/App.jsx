@@ -450,7 +450,7 @@ const generateSuggestions = async (retryCount = 0) => {
         setHasGeneratedOnce(true);
       } catch (parseError) {
         // JSON parse failed - retry up to 2 times
-        if (retryCount < 2) {
+        if (retryCount < 4) {
           console.log(`JSON parse failed, retrying (attempt ${retryCount + 1}/2)...`);
           clearInterval(progressInterval);
           return generateSuggestions(retryCount + 1);
